@@ -7,6 +7,15 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0A0E1A">
 <title>AI 도어센서 스마트홈</title>
+<meta name="application-name" content="AI 도어센서">
+<meta name="apple-mobile-web-app-title" content="AI 도어센서">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="IT융합통신학과 졸업작품 - 스마트홈 원격 제어 시스템">
+<link rel="manifest" href="manifest.json">
+<!-- 아이폰 홈 화면 아이콘 -->
+<link rel="apple-touch-icon" href="icon-192.png">
+<!-- 아이폰 스플래시 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -169,6 +178,29 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card2);border:1px solid var(--bdr);border-radius:12px;padding:10px 18px;font-size:13px;color:var(--tx);white-space:nowrap;z-index:999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;max-width:90vw;text-align:center;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .empty{text-align:center;padding:28px 20px;color:var(--tx2);font-size:13px;}
+
+/* ── 가상 시뮬레이션 ── */
+.sim-box{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:9px;}
+.sim-title{font-size:11px;font-weight:600;color:var(--tx2);font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
+.sim-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--gd);color:var(--gold);border:1px solid var(--gold);}
+.sim-rooms{display:flex;justify-content:space-around;align-items:flex-end;padding:8px 0;}
+.sim-room{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:all .2s;}
+.sim-room:active{transform:scale(.95);}
+.sim-bulb{position:relative;width:56px;height:56px;}
+.sim-bulb svg{width:100%;height:100%;transition:all .4s;}
+.sim-bulb-glow{position:absolute;inset:-8px;border-radius:50%;transition:all .4s;pointer-events:none;}
+.sim-room.son .sim-bulb-glow{background:radial-gradient(circle, rgba(255,220,50,.35) 0%, transparent 70%);animation:glow 1.5s ease-in-out infinite alternate;}
+@keyframes glow{0%{opacity:.7;}100%{opacity:1;}}
+.sim-room-name{font-size:11px;font-weight:600;color:var(--tx2);transition:color .3s;}
+.sim-room.son .sim-room-name{color:var(--gold);}
+.sim-room-state{font-size:10px;font-family:'DM Mono',monospace;color:var(--tx3);transition:color .3s;}
+.sim-room.son .sim-room-state{color:var(--on);}
+.sim-relay{margin-top:10px;background:var(--surf);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;border:1px solid var(--bdr);}
+.sim-relay-led{width:14px;height:14px;border-radius:50%;background:#333;border:1px solid #555;transition:all .3s;flex-shrink:0;}
+.sim-relay-led.on{background:#4CAF82;box-shadow:0 0 8px #4CAF82;border-color:#4CAF82;animation:blink .5s ease-out;}
+@keyframes blink{0%{transform:scale(1.4);}100%{transform:scale(1);}}
+.sim-relay-txt{font-size:11px;color:var(--tx2);font-family:'DM Mono',monospace;}
+.sim-relay-txt span{color:var(--tx);font-weight:600;}
 </style>
 </head>
 <body>
@@ -219,6 +251,58 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
         <div><div class="stlb" id="sl">연결 중...</div><div class="stdb" id="sd">Firebase 동기화 중</div></div>
       </div>
       <div><div class="scnt" id="sc">0/3</div><div class="sclb">켜진 방</div></div>
+    </div>
+
+    <!-- 가상 시뮬레이션 -->
+    <div class="stit">가상 시뮬레이션</div>
+    <div class="sim-box">
+      <div class="sim-title">
+        <span>💡 전구 시뮬레이터</span>
+        <span class="sim-badge" id="simBadge">전체 꺼짐</span>
+      </div>
+      <div class="sim-rooms">
+        <div class="sim-room" id="sim-living" onclick="togRoom('living')">
+          <div class="sim-bulb">
+            <div class="sim-bulb-glow" id="sg-living"></div>
+            <svg id="sv-living" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="32" cy="26" r="16" fill="#2A3354" stroke="#3A4A6A" stroke-width="2"/>
+              <path d="M24 42h16M26 46h12M28 50h8" stroke="#3A4A6A" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M24 42c0-4-8-8-8-16a16 16 0 0132 0c0 8-8 12-8 16" fill="#2A3354" stroke="#3A4A6A" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="sim-room-name">거실</div>
+          <div class="sim-room-state" id="ss-living">OFF</div>
+        </div>
+        <div class="sim-room" id="sim-bedroom" onclick="togRoom('bedroom')">
+          <div class="sim-bulb">
+            <div class="sim-bulb-glow" id="sg-bedroom"></div>
+            <svg id="sv-bedroom" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="32" cy="26" r="16" fill="#2A3354" stroke="#3A4A6A" stroke-width="2"/>
+              <path d="M24 42h16M26 46h12M28 50h8" stroke="#3A4A6A" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M24 42c0-4-8-8-8-16a16 16 0 0132 0c0 8-8 12-8 16" fill="#2A3354" stroke="#3A4A6A" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="sim-room-name">안방</div>
+          <div class="sim-room-state" id="ss-bedroom">OFF</div>
+        </div>
+        <div class="sim-room" id="sim-bathroom" onclick="togRoom('bathroom')">
+          <div class="sim-bulb">
+            <div class="sim-bulb-glow" id="sg-bathroom"></div>
+            <svg id="sv-bathroom" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="32" cy="26" r="16" fill="#2A3354" stroke="#3A4A6A" stroke-width="2"/>
+              <path d="M24 42h16M26 46h12M28 50h8" stroke="#3A4A6A" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M24 42c0-4-8-8-8-16a16 16 0 0132 0c0 8-8 12-8 16" fill="#2A3354" stroke="#3A4A6A" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="sim-room-name">화장실</div>
+          <div class="sim-room-state" id="ss-bathroom">OFF</div>
+        </div>
+      </div>
+      <!-- 릴레이 상태 표시 -->
+      <div class="sim-relay">
+        <div class="sim-relay-led" id="relayLed"></div>
+        <div class="sim-relay-txt">릴레이 모듈: <span id="relayTxt">꺼짐</span> &nbsp;|&nbsp; NodeMCU D4핀 → <span id="d4Txt">LOW</span></div>
+      </div>
     </div>
 
     <!-- 집안 전체 -->
@@ -325,11 +409,17 @@ const RNAME={living:'거실',bedroom:'안방',bathroom:'화장실'};
 const roomState={living:false,bedroom:false,bathroom:false};
 
 let logs=[],notifs=[];
-let members=[
-  {id:1,name:'문성일',studentId:'2001184',emoji:'😊',color:'#4E7FD4',bg:'rgba(78,127,212,.15)'},
-  {id:2,name:'손의윤',studentId:'2101056',emoji:'🙋',color:'#4CAF82',bg:'rgba(76,175,130,.15)'},
+let members=[];  // Firebase에서 실시간으로 불러옴
+let pending=[],nid=100,pnid=200;
+
+// 멤버 색상 팔레트
+const MC=[
+  {color:'#4E7FD4',bg:'rgba(78,127,212,.15)'},
+  {color:'#4CAF82',bg:'rgba(76,175,130,.15)'},
+  {color:'#C9504C',bg:'rgba(201,80,76,.15)'},
+  {color:'#9B7FD4',bg:'rgba(155,127,212,.15)'},
 ];
-let pending=[],nid=3,pnid=100;
+function getMC(idx){ return MC[idx%MC.length]; }
 
 // ── 로그인 ──
 function login(idx){
@@ -392,6 +482,24 @@ function initFB(){
     if(document.getElementById('p-hist').classList.contains('show')) renderLogs();
     if(document.getElementById('p-notif').classList.contains('show')) renderNotifs();
   });
+
+  // ── 멤버 목록 실시간 Firebase 연동 ──
+  db.ref('/members').on('value',s=>{
+    members=[];
+    s.forEach(c=>{
+      members.push({id:c.key, ...c.val()});
+    });
+    // 기본 멤버 없으면 자동 추가
+    if(members.length===0 && curUser && curUser.isAdmin){
+      const defaults=[
+        {name:'문성일',studentId:'2001184',emoji:'😊',...getMC(0)},
+        {name:'손의윤',studentId:'2101056',emoji:'🙋',...getMC(1)},
+        {name:'강규창',studentId:'0000001',emoji:'👨‍🏫',...getMC(2)},
+      ];
+      defaults.forEach(m=>db.ref('/members').push(m));
+    }
+    if(document.getElementById('p-share').classList.contains('show')) renderShare();
+  });
 }
 
 // ── 방 개별 토글 ──
@@ -436,6 +544,59 @@ function updateRoomUI(r){
   document.getElementById('rc-'+r).classList.toggle('ron',on);
   document.getElementById('tg-'+r).classList.toggle('ton',on);
   document.getElementById('rs-'+r).textContent=on?'● ON':'● OFF';
+  // 시뮬레이션 업데이트
+  updateSimRoom(r, on);
+}
+
+function updateSimRoom(r, on){
+  const simRoom = document.getElementById('sim-'+r);
+  const sv = document.getElementById('sv-'+r);
+  const ss = document.getElementById('ss-'+r);
+  if(!simRoom) return;
+  simRoom.classList.toggle('son', on);
+  ss.textContent = on ? 'ON' : 'OFF';
+  // 전구 색상 변경
+  if(on){
+    sv.innerHTML = `
+      <defs><radialGradient id="bg${r}" cx="50%" cy="40%"><stop offset="0%" stop-color="#FFFDE7"/><stop offset="100%" stop-color="#FFD740"/></radialGradient></defs>
+      <circle cx="32" cy="26" r="16" fill="url(#bg${r})" stroke="#FFD740" stroke-width="2"/>
+      <path d="M24 42h16M26 46h12M28 50h8" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M24 42c0-4-8-8-8-16a16 16 0 0132 0c0 8-8 12-8 16" fill="url(#bg${r})" stroke="#FFD740" stroke-width="2"/>
+      <circle cx="32" cy="26" r="7" fill="white" opacity="0.6"/>`;
+  } else {
+    sv.innerHTML = `
+      <circle cx="32" cy="26" r="16" fill="#2A3354" stroke="#3A4A6A" stroke-width="2"/>
+      <path d="M24 42h16M26 46h12M28 50h8" stroke="#3A4A6A" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M24 42c0-4-8-8-8-16a16 16 0 0132 0c0 8-8 12-8 16" fill="#2A3354" stroke="#3A4A6A" stroke-width="2"/>`;
+  }
+  updateSimRelay();
+}
+
+function updateSimRelay(){
+  const anyOn = ROOMS.some(r=>roomState[r]);
+  const led = document.getElementById('relayLed');
+  const relayTxt = document.getElementById('relayTxt');
+  const d4Txt = document.getElementById('d4Txt');
+  const badge = document.getElementById('simBadge');
+  if(!led) return;
+  if(anyOn){
+    led.className = 'sim-relay-led on';
+    relayTxt.textContent = '켜짐 (NO → COM 연결)';
+    d4Txt.textContent = 'HIGH';
+    const onCnt = ROOMS.filter(r=>roomState[r]).length;
+    badge.textContent = onCnt === 3 ? '전체 켜짐' : onCnt + '개 켜짐';
+    badge.style.background = 'rgba(76,175,130,.15)';
+    badge.style.color = '#4CAF82';
+    badge.style.borderColor = '#4CAF82';
+  } else {
+    led.className = 'sim-relay-led';
+    relayTxt.textContent = '꺼짐';
+    d4Txt.textContent = 'LOW';
+    badge.textContent = '전체 꺼짐';
+    badge.style.background = 'var(--gd)';
+    badge.style.color = 'var(--gold)';
+    badge.style.borderColor = 'var(--gold)';
+  }
 }
 
 function updateSummary(){
@@ -560,12 +721,41 @@ function renderShare(){
   el.innerHTML=html;
 }
 
-const MC=[{color:'#9B7FD4',bg:'rgba(155,127,212,.15)'},{color:'#E8A84C',bg:'rgba(232,168,76,.15)'},{color:'#C9504C',bg:'rgba(201,80,76,.15)'},{color:'#4E7FD4',bg:'rgba(78,127,212,.15)'}];
-function approveMember(id){const p=pending.find(x=>x.id===id);if(!p)return;if(members.length>=4){toast('나머지 대상이 꽉 찼어요');return;}const mc=MC[members.length%MC.length];members.push({id:nid++,name:p.name,studentId:p.studentId||'-',emoji:p.emoji,color:mc.color,bg:mc.bg});pending=pending.filter(x=>x.id!==id);renderShare();toast(p.name+' 님을 승인했어요 ✅');}
+function approveMember(id){
+  const p=pending.find(x=>x.id===id);
+  if(!p)return;
+  if(members.length>=4){toast('나머지 대상이 꽉 찼어요');return;}
+  const mc=getMC(members.length);
+  db.ref('/members').push({name:p.name,studentId:p.studentId||'-',emoji:p.emoji,color:mc.color,bg:mc.bg});
+  pending=pending.filter(x=>x.id!==id);
+  renderShare();
+  toast(p.name+' 님을 승인했어요 ✅');
+}
 function rejectMember(id){pending=pending.filter(x=>x.id!==id);renderShare();toast('요청을 거절했어요');}
-function rmMember(id){members=members.filter(m=>m.id!==id);renderShare();toast('멤버가 제거됐어요');}
-function doAdd(){const name=document.getElementById('mnm').value.trim();const stu=document.getElementById('mstu').value.trim()||'-';const emoji=document.getElementById('memj').value.trim()||'👤';if(!name){toast('이름을 입력해주세요');return;}if(members.length>=4){toast('나머지 대상이 꽉 찼어요');return;}const mc=MC[members.length%MC.length];members.push({id:nid++,name,studentId:stu,emoji,color:mc.color,bg:mc.bg});document.getElementById('addForm').style.display='none';renderShare();toast(name+' 님을 추가했어요 🎉');}
-function sendReq(){const name=document.getElementById('rqnm').value.trim();const emoji=document.getElementById('rqemj').value.trim()||'🙋';if(!name){toast('이름을 입력해주세요');return;}pending.push({id:pnid++,name,emoji,studentId:'',time:'방금'});document.getElementById('reqForm').style.display='none';renderShare();toast('관리자(김민종)에게 요청을 보냈어요 📩');}
+function rmMember(id){
+  db.ref('/members/'+id).remove();
+  toast('멤버가 제거됐어요');
+}
+function doAdd(){
+  const name=document.getElementById('mnm').value.trim();
+  const stu=document.getElementById('mstu').value.trim()||'-';
+  const emoji=document.getElementById('memj').value.trim()||'👤';
+  if(!name){toast('이름을 입력해주세요');return;}
+  if(members.length>=4){toast('나머지 대상이 꽉 찼어요');return;}
+  const mc=getMC(members.length);
+  db.ref('/members').push({name,studentId:stu,emoji,color:mc.color,bg:mc.bg});
+  document.getElementById('addForm').style.display='none';
+  toast(name+' 님을 추가했어요 🎉');
+}
+function sendReq(){
+  const name=document.getElementById('rqnm').value.trim();
+  const emoji=document.getElementById('rqemj').value.trim()||'🙋';
+  if(!name){toast('이름을 입력해주세요');return;}
+  pending.push({id:pnid++,name,emoji,studentId:'',time:'방금'});
+  document.getElementById('reqForm').style.display='none';
+  renderShare();
+  toast('관리자(김민종)에게 요청을 보냈어요 📩');
+}
 
 function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));document.getElementById(id).classList.add('show');if(id==='p-hist')renderLogs();if(id==='p-notif')renderNotifs();if(id==='p-share')renderShare();}
 function openDrw(){document.getElementById('drw').classList.add('open');document.getElementById('dovl').classList.add('open');}
@@ -573,6 +763,15 @@ function closeDrw(){document.getElementById('drw').classList.remove('open');docu
 function nowStr(){const d=new Date();return'오늘 '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
 let tt;
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2400);}
+
+// ── PWA 서비스워커 등록 ──
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js')
+      .then(()=>console.log('SW 등록 완료'))
+      .catch(e=>console.log('SW 등록 실패:', e));
+  });
+}
 </script>
 </body>
 </html>
