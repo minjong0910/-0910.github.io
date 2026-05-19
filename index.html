@@ -169,6 +169,116 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card2);border:1px solid var(--bdr);border-radius:12px;padding:10px 18px;font-size:13px;color:var(--tx);white-space:nowrap;z-index:999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;max-width:90vw;text-align:center;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .empty{text-align:center;padding:28px 20px;color:var(--tx2);font-size:13px;}
+
+/* ── 하단 탭바 ── */
+.tab-bar{display:flex;background:var(--surf);border-top:1px solid var(--bdr);flex-shrink:0;}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px 10px;cursor:pointer;}
+.tab:active{opacity:.6;}
+.tab.active{background:var(--gd);}
+.tab-icon{font-size:20px;line-height:1;}
+.tab-label{font-size:9px;font-weight:700;color:var(--tx2);}
+.tab.active .tab-label{color:var(--gold);}
+
+/* ── 타이머 ── */
+.timer-hero{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:20px 16px;margin-bottom:12px;text-align:center;}
+.timer-clock{font-size:52px;font-weight:800;color:var(--gold);font-family:'DM Mono',monospace;letter-spacing:2px;line-height:1.1;}
+.timer-clock.active{color:var(--on);animation:tpulse 1s ease-in-out infinite alternate;}
+@keyframes tpulse{0%{opacity:1;}100%{opacity:.7;}}
+.timer-label{font-size:11px;color:var(--tx2);margin-top:4px;}
+.timer-target{font-size:12px;color:var(--gold);margin-top:6px;font-weight:600;}
+.timer-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+.tbtn{background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;padding:12px 6px;text-align:center;cursor:pointer;transition:all .2s;}
+.tbtn:active{transform:scale(.95);}
+.tbtn.sel{border-color:var(--gold);background:var(--gd);}
+.tbtn-time{font-size:16px;font-weight:700;color:var(--gold);font-family:'DM Mono',monospace;}
+.tbtn-label{font-size:9px;color:var(--tx2);margin-top:2px;}
+.custom-time{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:14px;margin-bottom:12px;}
+.custom-row{display:flex;align-items:center;gap:8px;margin-top:8px;justify-content:center;}
+.custom-inp{background:var(--surf);border:1.5px solid var(--bdr);border-radius:8px;color:var(--tx);font-size:24px;font-weight:700;font-family:'DM Mono',monospace;text-align:center;width:70px;padding:10px 4px;}
+.custom-inp:focus{outline:none;border-color:var(--gold);}
+.live-total{background:var(--surf);border-radius:10px;padding:8px 14px;font-size:12px;color:var(--tx2);text-align:center;border:1px solid var(--bdr);margin-top:8px;}
+.timer-action{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.tact{background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;padding:12px;text-align:center;cursor:pointer;transition:all .2s;}
+.tact.sel{border-color:var(--bl);background:rgba(78,127,212,.08);}
+.tact-icon{font-size:22px;margin-bottom:4px;}
+.tact-label{font-size:11px;font-weight:600;color:var(--tx2);}
+.tact.sel .tact-label{color:var(--bl);}
+.timer-start-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),#E8C87A);border:none;border-radius:14px;color:#0A0E1A;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:8px;}
+.timer-stop-btn{width:100%;padding:12px;background:rgba(201,80,76,.1);border:1.5px solid #C9504C;border-radius:14px;color:#C9504C;font-size:13px;font-weight:700;cursor:pointer;display:none;}
+.test-notif-btn{width:100%;padding:10px;background:var(--surf);border:1.5px dashed var(--gold);border-radius:12px;color:var(--gold);font-size:12px;font-weight:700;cursor:pointer;margin-top:6px;}
+.sched-box{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:12px;}
+.sched-time-inp{width:100%;background:var(--surf);border:1.5px solid var(--gold);border-radius:10px;color:var(--gold);font-size:28px;font-weight:800;font-family:'DM Mono',monospace;text-align:center;padding:12px 8px;letter-spacing:4px;}
+.sched-action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;}
+.sched-add-btn{width:100%;background:var(--gold);border:none;border-radius:10px;color:#0A0E1A;font-size:14px;font-weight:800;padding:12px;cursor:pointer;}
+.sched-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surf);border-radius:10px;margin-bottom:6px;border:1px solid var(--bdr);}
+.sched-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sched-del{background:none;border:none;color:var(--tx2);font-size:16px;cursor:pointer;padding:4px 8px;}
+
+/* ── 타이머 알림 배너 ── */
+#tnBox{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-200px);z-index:99999;background:#1C2A45;border:2px solid #C9A84C;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;width:330px;max-width:93vw;box-shadow:0 8px 32px rgba(0,0,0,.7);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+#tnBox.show{transform:translateX(-50%) translateY(0);}
+#tnIcon{font-size:26px;flex-shrink:0;}
+#tnBody{flex:1;}
+#tnTitle{font-size:13px;font-weight:800;color:#C9A84C;margin-bottom:3px;}
+#tnMsg{font-size:11px;color:#8A9BB8;line-height:1.5;}
+#tnBar{position:absolute;bottom:0;left:0;height:4px;background:#C9A84C;border-radius:0 0 16px 16px;width:100%;}
+#tnClose{background:#C9A84C;border:none;color:#0A0E1A;font-size:11px;font-weight:800;padding:6px 12px;border-radius:8px;cursor:pointer;flex-shrink:0;}
+
+/* ── 비상 배너 ── */
+#emgBox{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-200px);z-index:999999;background:#2A0A0A;border:2.5px solid #C9504C;border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;width:340px;max-width:93vw;box-shadow:0 8px 40px rgba(201,80,76,.5);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+#emgBox.show{transform:translateX(-50%) translateY(0);}
+.emg-top{display:flex;align-items:center;gap:10px;}
+.emg-icon{font-size:28px;animation:emgblink .5s ease-in-out infinite alternate;}
+@keyframes emgblink{0%{opacity:1;}100%{opacity:.4;}}
+.emg-title{font-size:14px;font-weight:800;color:#FF6B6B;margin-bottom:3px;}
+.emg-msg{font-size:11px;color:#E8A8A8;line-height:1.5;}
+.emg-watt{font-size:22px;font-weight:800;color:#FF6B6B;font-family:'DM Mono',monospace;text-align:center;background:rgba(201,80,76,.15);border-radius:10px;padding:8px;border:1px solid rgba(201,80,76,.3);}
+.emg-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.emg-cut{background:#C9504C;border:none;border-radius:10px;color:white;font-size:13px;font-weight:800;padding:12px;cursor:pointer;}
+.emg-close-btn{background:rgba(255,255,255,.08);border:1px solid rgba(201,80,76,.4);border-radius:10px;color:#E8A8A8;font-size:12px;font-weight:700;padding:12px;cursor:pointer;}
+
+/* ── 전력 대시보드 ── */
+.pw-hero{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:18px;margin-bottom:10px;text-align:center;}
+.pw-watt{font-size:56px;font-weight:800;color:var(--gold);font-family:'DM Mono',monospace;line-height:1;}
+.pw-unit{font-size:16px;color:var(--tx2);font-weight:600;}
+.pw-bar-wrap{background:var(--surf);border-radius:8px;height:10px;overflow:hidden;margin:8px 0 6px;}
+.pw-bar{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--on),var(--gold));transition:width .8s ease;}
+.pw-bar.warn{background:linear-gradient(90deg,var(--gold),#FF9500);}
+.pw-bar.danger{background:linear-gradient(90deg,#FF9500,var(--off));}
+.pw-status{font-size:11px;color:var(--tx2);}
+.pw-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.pw-card{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:12px;text-align:center;}
+.pw-card-val{font-size:18px;font-weight:800;font-family:'DM Mono',monospace;color:var(--tx);}
+.pw-card-lbl{font-size:9px;color:var(--tx2);margin-top:3px;}
+.pw-thresh{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:10px;}
+.pw-th-row{display:flex;align-items:center;gap:10px;margin-top:8px;}
+.pw-th-inp{background:var(--surf);border:1.5px solid var(--bdr);border-radius:8px;color:var(--tx);font-size:18px;font-weight:700;font-family:'DM Mono',monospace;text-align:center;padding:8px;width:100px;}
+.pw-th-inp:focus{outline:none;border-color:var(--gold);}
+.pw-th-btn{background:var(--gold);border:none;border-radius:8px;color:#0A0E1A;font-size:12px;font-weight:800;padding:9px 16px;cursor:pointer;}
+
+/* ── AI 분석 ── */
+.ai-hero{background:linear-gradient(135deg,#0F1A35,#1C2A50);border:1.5px solid var(--bl);border-radius:16px;padding:18px;margin-bottom:12px;text-align:center;}
+.ai-hero-icon{font-size:40px;margin-bottom:8px;}
+.ai-hero-title{font-size:16px;font-weight:800;color:var(--bl);margin-bottom:4px;}
+.ai-hero-sub{font-size:11px;color:var(--tx2);line-height:1.6;}
+.ai-analyze-btn{width:100%;padding:14px;background:linear-gradient(135deg,#4E7FD4,#2E5BAA);border:none;border-radius:14px;color:white;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:12px;}
+.ai-analyze-btn:disabled{opacity:.5;cursor:not-allowed;}
+.ai-loading{text-align:center;padding:24px;color:var(--tx2);font-size:13px;}
+.ai-dots span{display:inline-block;animation:aidot 1.2s infinite;font-size:20px;}
+.ai-dots span:nth-child(2){animation-delay:.2s;}
+.ai-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes aidot{0%,80%,100%{opacity:.2;}40%{opacity:1;}}
+.ai-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.ai-stat{background:var(--surf);border-radius:10px;padding:10px;text-align:center;border:1px solid var(--bdr);}
+.ai-stat-val{font-size:20px;font-weight:800;color:var(--gold);font-family:'DM Mono',monospace;}
+.ai-stat-lbl{font-size:9px;color:var(--tx2);margin-top:2px;}
+.ai-result-box{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:16px;margin-bottom:10px;}
+.ai-card{background:var(--surf);border-radius:12px;padding:14px;margin-bottom:8px;border-left:3px solid var(--bl);}
+.ai-card.gold{border-left-color:var(--gold);}
+.ai-card.green{border-left-color:var(--on);}
+.ai-card.red{border-left-color:var(--off);}
+.ai-card-label{font-size:10px;font-weight:700;color:var(--tx2);letter-spacing:.5px;margin-bottom:6px;}
+.ai-card-content{font-size:13px;color:var(--tx);line-height:1.7;}
 </style>
 </head>
 <body>
@@ -203,7 +313,11 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
       <div class="mbtn" onclick="openDrw()"><div class="mline"></div><div class="mline"></div><div class="mline"></div></div>
       <div><div class="htit">스마트홈 제어</div><div class="hsub">AI 도어센서 시스템</div></div>
     </div>
-    <div class="gbtn" onclick="go('p-share')"><span style="font-size:13px">👥</span><span class="gbtn-t">공유 대상</span></div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <div id="pwHdrBadge" style="background:var(--gd);border:1px solid var(--gold);border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;color:var(--gold);font-family:'DM Mono',monospace;">-- W</div>
+      <div onclick="go('p-notif')" style="background:var(--card);border:1px solid var(--bdr);border-radius:8px;padding:5px 9px;font-size:16px;cursor:pointer;line-height:1;">🔔</div>
+      <div onclick="testEmg()" style="background:rgba(201,80,76,.1);border:1px solid rgba(201,80,76,.5);border-radius:8px;padding:5px 9px;font-size:16px;cursor:pointer;line-height:1;">🚨</div>
+    </div>
   </div>
   <div class="gbar"></div>
   <div class="cub" id="cubBar"></div>
@@ -290,12 +404,162 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 <div class="drw" id="drw">
   <div class="dhdr"><div class="dtit">AI 도어센서</div><div class="dsub" id="drwSub">IT융합통신학과 졸업작품</div></div>
   <div class="ditm act"  onclick="go('p-home');  closeDrw()"><span class="dic">🏠</span>홈 대시보드</div>
-  <div class="ditm"      onclick="go('p-hist');  closeDrw()"><span class="dic">📊</span>사용 기록</div>
+  <div class="ditm"      onclick="goTab('p-ai','tab-ai');    closeDrw()"><span class="dic">🤖</span>AI 패턴 분석</div>
+  <div class="ditm"      onclick="goTab('p-power','tab-power'); closeDrw()"><span class="dic">⚡</span>전력 대시보드</div>
+  <div class="ditm"      onclick="goTab('p-timer','tab-timer'); closeDrw()"><span class="dic">⏰</span>타이머 & 예약</div>
+  <div class="ditm"      onclick="goTab('p-hist','tab-hist');   closeDrw()"><span class="dic">📊</span>사용 기록</div>
   <div class="ditm"      onclick="go('p-notif');closeDrw()"><span class="dic">🔔</span>알림 설정</div>
   <div class="ditm"      onclick="go('p-share');closeDrw()"><span class="dic">👥</span>공유 대상</div>
   <div class="ditm"      onclick="closeDrw()">   <span class="dic">⚙️</span>기기 설정</div>
+  <!-- 하단 탭바 -->
+  <div class="tab-bar">
+    <div class="tab active" id="tab-home" onclick="goTab('p-home','tab-home')"><div class="tab-icon">🏠</div><div class="tab-label">홈</div></div>
+    <div class="tab" id="tab-power" onclick="goTab('p-power','tab-power')"><div class="tab-icon">⚡</div><div class="tab-label">전력</div></div>
+    <div class="tab" id="tab-timer" onclick="goTab('p-timer','tab-timer')"><div class="tab-icon">⏰</div><div class="tab-label">타이머</div></div>
+    <div class="tab" id="tab-ai" onclick="goTab('p-ai','tab-ai')"><div class="tab-icon">🤖</div><div class="tab-label">AI분석</div></div>
+    <div class="tab" id="tab-hist" onclick="goTab('p-hist','tab-hist')"><div class="tab-icon">📋</div><div class="tab-label">기록</div></div>
+  </div>
 </div>
 </div>
+<!-- 타이머 -->
+<div class="page" id="p-timer">
+  <div class="hdr"><div class="hl"><div class="bbtn" onclick="goTab('p-home','tab-home')">←</div><div><div class="htit">타이머 & 예약</div><div class="hsub">수면 타이머 · 예약 제어</div></div></div></div>
+  <div class="gbar"></div>
+  <div class="pcon">
+    <div class="timer-hero">
+      <div class="timer-clock" id="timerClock">00:00:00</div>
+      <div class="timer-label" id="timerLabel">타이머 대기 중</div>
+      <div class="timer-target" id="timerTarget"></div>
+    </div>
+    <div class="stit">직접 설정</div>
+    <div class="custom-time">
+      <div style="font-size:11px;color:var(--tx2);margin-bottom:10px;">시 · 분 · 초 입력 — 위 시계에 실시간 반영</div>
+      <div class="custom-row">
+        <input class="custom-inp" id="custH" type="number" min="0" max="23" value="0" oninput="livePreview()">
+        <span style="color:var(--tx2);font-size:14px;">시</span>
+        <input class="custom-inp" id="custM" type="number" min="0" max="59" value="0" oninput="livePreview()">
+        <span style="color:var(--tx2);font-size:14px;">분</span>
+        <input class="custom-inp" id="custS" type="number" min="0" max="59" value="0" oninput="livePreview()">
+        <span style="color:var(--tx2);font-size:14px;">초</span>
+      </div>
+      <div class="live-total" id="liveTotal">총 0초 설정됨</div>
+    </div>
+    <div class="stit">🌙 수면 빠른 선택</div>
+    <div class="timer-btns">
+      <div class="tbtn" onclick="quickTimer(30)" id="qt-30"><div class="tbtn-time">30분</div><div class="tbtn-label">짧은 낮잠</div></div>
+      <div class="tbtn" onclick="quickTimer(60)" id="qt-60"><div class="tbtn-time">1시간</div><div class="tbtn-label">일반</div></div>
+      <div class="tbtn" onclick="quickTimer(120)" id="qt-120"><div class="tbtn-time">2시간</div><div class="tbtn-label">낮잠</div></div>
+      <div class="tbtn" onclick="quickTimer(360)" id="qt-360"><div class="tbtn-time">6시간</div><div class="tbtn-label">수면</div></div>
+      <div class="tbtn" onclick="quickTimer(480)" id="qt-480"><div class="tbtn-time">8시간</div><div class="tbtn-label">숙면 😴</div></div>
+      <div class="tbtn" onclick="quickTimer(540)" id="qt-540"><div class="tbtn-time">9시간</div><div class="tbtn-label">충분한 수면</div></div>
+    </div>
+    <div class="stit">타이머 종료 시</div>
+    <div class="timer-action">
+      <div class="tact sel" id="tact-off" onclick="setTimerAction('off')"><div class="tact-icon">🌙</div><div class="tact-label">전체 끄기</div></div>
+      <div class="tact" id="tact-on" onclick="setTimerAction('on')"><div class="tact-icon">💡</div><div class="tact-label">전체 켜기</div></div>
+    </div>
+    <button class="timer-start-btn" id="timerStartBtn" onclick="startTimer()">⏰ 타이머 시작</button>
+    <button class="timer-stop-btn" id="timerStopBtn" onclick="stopTimer()">■ 타이머 취소</button>
+    <button class="test-notif-btn" onclick="testNotif()">🔔 알림 테스트</button>
+    <div class="stit" style="margin-top:16px;">📅 예약 제어</div>
+    <div class="sched-box">
+      <div style="font-size:12px;color:var(--tx2);margin-bottom:10px;">특정 시간에 자동으로 켜거나 끌 수 있어요</div>
+      <input type="time" class="sched-time-inp" id="schedTime" value="07:00">
+      <div class="sched-action-row">
+        <div class="tact" id="sact-off" onclick="setSchedAction('off')"><div class="tact-icon">🌙</div><div class="tact-label">끄기</div></div>
+        <div class="tact sel" id="sact-on" onclick="setSchedAction('on')"><div class="tact-icon">💡</div><div class="tact-label">켜기</div></div>
+      </div>
+      <button class="sched-add-btn" onclick="addSched()">+ 예약 추가</button>
+      <div id="schedList" style="margin-top:10px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 전력 대시보드 -->
+<div class="page" id="p-power">
+  <div class="hdr"><div class="hl"><div class="bbtn" onclick="goTab('p-home','tab-home')">←</div><div><div class="htit">전력 대시보드</div><div class="hsub">Tapo P110M 실시간 모니터링</div></div></div></div>
+  <div class="gbar"></div>
+  <div class="pcon">
+    <div class="pw-hero">
+      <div style="display:flex;align-items:flex-end;justify-content:center;gap:6px;margin-bottom:6px;">
+        <div class="pw-watt" id="pwNow">0</div><div class="pw-unit">W</div>
+      </div>
+      <div class="pw-bar-wrap"><div class="pw-bar" id="pwBar" style="width:0%"></div></div>
+      <div class="pw-status" id="pwStatus">전력 데이터 로딩 중...</div>
+    </div>
+    <div class="pw-cards">
+      <div class="pw-card"><div class="pw-card-val" id="pwToday">0 Wh</div><div class="pw-card-lbl">오늘 사용량</div></div>
+      <div class="pw-card"><div class="pw-card-val" id="pwMonth">0 kWh</div><div class="pw-card-lbl">이번 달 사용량</div></div>
+      <div class="pw-card"><div class="pw-card-val" id="pwCost">0원</div><div class="pw-card-lbl">예상 전기요금</div></div>
+      <div class="pw-card"><div class="pw-card-val" id="pwPeak">0 W</div><div class="pw-card-lbl">오늘 최대 전력</div></div>
+    </div>
+    <div class="pw-thresh">
+      <div style="font-size:12px;font-weight:700;color:var(--tx);">⚙️ 비상 임계값</div>
+      <div style="font-size:11px;color:var(--tx2);margin-top:4px;">이 값 초과 시 비상 알림 발동</div>
+      <div class="pw-th-row">
+        <input class="pw-th-inp" type="number" id="pwThresh" value="2000" min="100" max="3600">
+        <span style="color:var(--tx2);font-size:14px;">W</span>
+        <button class="pw-th-btn" onclick="savePwThresh()">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI 분석 -->
+<div class="page" id="p-ai">
+  <div class="hdr"><div class="hl"><div class="bbtn" onclick="goTab('p-home','tab-home')">←</div><div><div class="htit">AI 패턴 분석</div><div class="hsub">Claude AI 인사이트</div></div></div></div>
+  <div class="gbar"></div>
+  <div class="pcon">
+    <div class="ai-hero">
+      <div class="ai-hero-icon">🤖</div>
+      <div class="ai-hero-title">Claude AI 사용 패턴 분석</div>
+      <div class="ai-hero-sub">Firebase 기록을 AI가 분석해서<br>스마트홈 인사이트를 제공해요</div>
+    </div>
+    <button class="ai-analyze-btn" id="aiBtn" onclick="runAI()">🔍 AI 분석 시작</button>
+    <div class="ai-loading" id="aiLoad" style="display:none;">
+      <div class="ai-dots"><span>●</span><span>●</span><span>●</span></div>
+      <div style="margin-top:10px;" id="aiLoadTxt">분석 중...</div>
+    </div>
+    <div id="aiStatBox" style="display:none;">
+      <div class="stit">📊 통계 요약</div>
+      <div class="ai-stats">
+        <div class="ai-stat"><div class="ai-stat-val" id="aiTotal">0</div><div class="ai-stat-lbl">총 제어 횟수</div></div>
+        <div class="ai-stat"><div class="ai-stat-val" id="aiRoom">-</div><div class="ai-stat-lbl">가장 많이 켠 방</div></div>
+        <div class="ai-stat"><div class="ai-stat-val" id="aiHour">-시</div><div class="ai-stat-lbl">주 사용 시간대</div></div>
+        <div class="ai-stat"><div class="ai-stat-val" id="aiUser">-</div><div class="ai-stat-lbl">최다 사용 멤버</div></div>
+      </div>
+    </div>
+    <div id="aiResultBox" style="display:none;">
+      <div class="stit">🤖 AI 분석 결과</div>
+      <div class="ai-result-box">
+        <div class="ai-card gold"><div class="ai-card-label">📈 사용 패턴</div><div class="ai-card-content" id="aiPattern">-</div></div>
+        <div class="ai-card green"><div class="ai-card-label">💡 추천 사항</div><div class="ai-card-content" id="aiRecommend">-</div></div>
+        <div class="ai-card"><div class="ai-card-label">🔮 예측</div><div class="ai-card-content" id="aiPredict">-</div></div>
+        <div class="ai-card red"><div class="ai-card-label">⚠️ 주의사항</div><div class="ai-card-content" id="aiWarning">-</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 배너들 -->
+<div id="tnBox">
+  <div id="tnIcon">⏰</div>
+  <div id="tnBody"><div id="tnTitle">타이머 완료</div><div id="tnMsg">설정한 시간이 됐어요</div></div>
+  <button id="tnClose" onclick="tnHide()">끄기</button>
+  <div id="tnBar"></div>
+</div>
+<div id="emgBox">
+  <div class="emg-top">
+    <div class="emg-icon">🚨</div>
+    <div><div class="emg-title">⚡ 전력 이상 감지!</div><div class="emg-msg" id="emgMsg">전력 초과</div></div>
+  </div>
+  <div class="emg-watt" id="emgWattTxt">0 W</div>
+  <div class="emg-btns">
+    <button class="emg-cut" onclick="emgCut()">🔌 전체 차단</button>
+    <button class="emg-close-btn" onclick="emgHide()">무시하기</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -398,6 +662,9 @@ function initFB(){
     if(document.getElementById('p-hist').classList.contains('show')) renderLogs();
     if(document.getElementById('p-notif').classList.contains('show')) renderNotifs();
   });
+
+  // ── 추가 리스너 ──
+  initFBExtra();
 
   // ── 멤버 목록 실시간 Firebase 연동 ──
   db.ref('/members').on('value',s=>{
@@ -620,7 +887,269 @@ function sendReq(){
   toast('관리자(김민종)에게 요청을 보냈어요 📩');
 }
 
-function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));document.getElementById(id).classList.add('show');if(id==='p-hist')renderLogs();if(id==='p-notif')renderNotifs();if(id==='p-share')renderShare();}
+function go(id){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('show');});document.getElementById(id).classList.add('show');if(id==='p-hist')renderLogs();if(id==='p-notif')renderNotifs();if(id==='p-share')renderShare();}
+
+// ── 탭 전환 ──
+function goTab(pid, tid) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('show'); });
+  var pg = document.getElementById(pid);
+  if(pg) pg.classList.add('show');
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  var tb = document.getElementById(tid);
+  if(tb) tb.classList.add('active');
+  if(pid==='p-hist') renderLogs();
+  if(pid==='p-notif') renderNotifs();
+  if(pid==='p-share') renderShare();
+  if(pid==='p-timer') renderSched();
+  if(pid==='p-power') loadPower();
+}
+
+// ── 타이머 ──
+var timerInterval=null, timerEndTime=null, timerAction='off', schedAction='on', schedListArr=[];
+var _tnVibInt=null, _tnAutoHide=null, _emgAutoHide=null;
+var pwThreshVal=2000, pwPeak=0;
+
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function livePreview(){
+  if(timerInterval) return;
+  var h=parseInt(document.getElementById('custH').value)||0;
+  var m=parseInt(document.getElementById('custM').value)||0;
+  var s=parseInt(document.getElementById('custS').value)||0;
+  var total=h*3600+m*60+s;
+  var ck=document.getElementById('timerClock');
+  if(ck){ ck.textContent=pad(h)+':'+pad(m)+':'+pad(s); ck.classList.remove('active'); }
+  var lt=document.getElementById('liveTotal');
+  if(lt){ lt.textContent=total>0?'총 '+(h>0?h+'시간 ':'')+(m>0?m+'분 ':'')+(s>0?s+'초 ':'')+' = '+total+'초':'총 0초 설정됨'; lt.style.color=total>0?'var(--gold)':'var(--tx2)'; }
+  document.querySelectorAll('.tbtn').forEach(function(b){ b.classList.remove('sel'); });
+}
+
+function quickTimer(min){
+  document.querySelectorAll('.tbtn').forEach(function(b){ b.classList.remove('sel'); });
+  var el=document.getElementById('qt-'+min); if(el) el.classList.add('sel');
+  document.getElementById('custH').value=Math.floor(min/60);
+  document.getElementById('custM').value=min%60;
+  document.getElementById('custS').value=0;
+  livePreview();
+}
+
+function setTimerAction(act){
+  timerAction=act;
+  document.getElementById('tact-off').classList.toggle('sel',act==='off');
+  document.getElementById('tact-on').classList.toggle('sel',act==='on');
+}
+function setSchedAction(act){
+  schedAction=act;
+  document.getElementById('sact-off').classList.toggle('sel',act==='off');
+  document.getElementById('sact-on').classList.toggle('sel',act==='on');
+}
+
+function startTimer(){
+  var h=parseInt(document.getElementById('custH').value)||0;
+  var m=parseInt(document.getElementById('custM').value)||0;
+  var s=parseInt(document.getElementById('custS').value)||0;
+  var total=h*3600+m*60+s;
+  if(total<=0){ toast('시간을 설정해주세요'); return; }
+  timerEndTime=Date.now()+total*1000;
+  try{ db.ref('/timer').set({endTime:timerEndTime,action:timerAction,active:true}); }catch(e){}
+  timerInterval=setInterval(tickTimer,1000); tickTimer();
+  document.getElementById('timerStartBtn').style.display='none';
+  document.getElementById('timerStopBtn').style.display='block';
+  var ed=new Date(timerEndTime);
+  document.getElementById('timerTarget').textContent=pad(ed.getHours())+':'+pad(ed.getMinutes())+' 에 '+(timerAction==='off'?'전체 끄기':'전체 켜기')+' 예정';
+  document.getElementById('timerLabel').textContent='타이머 작동 중 🌙';
+  toast('⏰ 타이머 시작!');
+}
+
+function tickTimer(){
+  if(!timerEndTime) return;
+  var rem=Math.max(0,Math.floor((timerEndTime-Date.now())/1000));
+  var h=Math.floor(rem/3600),m=Math.floor((rem%3600)/60),s=rem%60;
+  var ck=document.getElementById('timerClock');
+  if(ck){ ck.textContent=pad(h)+':'+pad(m)+':'+pad(s); ck.classList.toggle('active',rem>0); }
+  if(rem<=0){
+    clearInterval(timerInterval); timerInterval=null; timerEndTime=null;
+    document.getElementById('timerLabel').textContent='타이머 완료! ✅';
+    document.getElementById('timerTarget').textContent='';
+    document.getElementById('timerStartBtn').style.display='block';
+    document.getElementById('timerStopBtn').style.display='none';
+    var ns=timerAction==='on';
+    ROOMS.forEach(function(r){ try{ db.ref('/rooms/'+r+'/state').set(ns); }catch(e){} });
+    try{ db.ref('/timer/active').set(false); }catch(e){}
+    tnShow(timerAction==='off'?'🌙':'💡','타이머 완료!',timerAction==='off'?'전체 꺼졌어요':'전체 켜졌어요');
+  }
+}
+
+function stopTimer(){
+  clearInterval(timerInterval); timerInterval=null; timerEndTime=null;
+  try{ db.ref('/timer/active').set(false); }catch(e){}
+  var ck=document.getElementById('timerClock'); if(ck){ ck.textContent='00:00:00'; ck.classList.remove('active'); }
+  document.getElementById('timerLabel').textContent='타이머 대기 중';
+  document.getElementById('timerTarget').textContent='';
+  document.getElementById('timerStartBtn').style.display='block';
+  document.getElementById('timerStopBtn').style.display='none';
+  document.getElementById('custH').value=0; document.getElementById('custM').value=0; document.getElementById('custS').value=0;
+  livePreview(); toast('타이머 취소됐어요');
+}
+
+// ── 예약 ──
+function addSched(){
+  var time=document.getElementById('schedTime').value;
+  if(!time){ toast('시간을 선택해주세요'); return; }
+  var id=Date.now().toString();
+  try{ db.ref('/schedules/'+id).set({id:id,time:time,action:schedAction}); }catch(e){}
+  toast('✅ '+time+' '+(schedAction==='on'?'켜기':'끄기')+' 예약 추가');
+}
+function delSched(id){ try{ db.ref('/schedules/'+id).remove(); }catch(e){} toast('예약 삭제됐어요'); }
+function renderSched(){
+  var el=document.getElementById('schedList'); if(!el) return;
+  if(!schedListArr.length){ el.innerHTML='<div style="color:var(--tx2);font-size:12px;text-align:center;padding:10px">예약 없음</div>'; return; }
+  var sorted=[].concat(schedListArr).sort(function(a,b){ return a.time.localeCompare(b.time); });
+  el.innerHTML=sorted.map(function(s){
+    return '<div class="sched-item"><div style="display:flex;align-items:center;gap:8px;"><div class="sched-dot" style="background:'+(s.action==='on'?'#4CAF82':'#C9A84C')+'"></div><span style="font-size:16px;font-weight:700;font-family:monospace;">'+s.time+'</span><span style="font-size:11px;color:var(--tx2)">'+(s.action==='on'?'💡 켜기':'🌙 끄기')+'</span></div><button class="sched-del" onclick="delSched(''+s.id+'')">✕</button></div>';
+  }).join('');
+}
+
+// ── 타이머 배너 ──
+function tnShow(icon,title,msg){
+  var box=document.getElementById('tnBox'),bar=document.getElementById('tnBar');
+  if(!box) return;
+  document.getElementById('tnIcon').textContent=icon;
+  document.getElementById('tnTitle').textContent=title;
+  document.getElementById('tnMsg').textContent=msg;
+  if(bar){ bar.style.transition='none'; bar.style.width='100%'; setTimeout(function(){ bar.style.transition='width 30s linear'; bar.style.width='0%'; },50); }
+  box.classList.remove('show');
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ box.classList.add('show'); }); });
+  clearTimeout(_tnAutoHide); _tnAutoHide=setTimeout(tnHide,30000);
+  try{ if(navigator.vibrate){ var p=[]; for(var i=0;i<60;i++) p.push(500,100); navigator.vibrate(p); } }catch(e){}
+}
+function tnHide(){
+  var box=document.getElementById('tnBox'); if(box) box.classList.remove('show');
+  clearTimeout(_tnAutoHide);
+  try{ if(navigator.vibrate) navigator.vibrate(0); }catch(e){}
+}
+function testNotif(){ tnShow('⏰','타이머 완료!','[끄기] 전까지 진동이 울려요'); }
+
+// ── 비상 배너 ──
+function emgShow(watt,reason){
+  var box=document.getElementById('emgBox');
+  if(!box) return;
+  document.getElementById('emgMsg').textContent=reason||'전력 이상!';
+  document.getElementById('emgWattTxt').textContent=Math.round(watt)+' W';
+  box.classList.remove('show');
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ box.classList.add('show'); }); });
+  clearTimeout(_emgAutoHide); _emgAutoHide=setTimeout(emgHide,30000);
+  try{ if(navigator.vibrate){ var p=[]; for(var i=0;i<30;i++) p.push(800,200); navigator.vibrate(p); } }catch(e){}
+}
+function emgHide(){
+  var box=document.getElementById('emgBox'); if(box) box.classList.remove('show');
+  clearTimeout(_emgAutoHide);
+  try{ if(navigator.vibrate) navigator.vibrate(0); }catch(e){}
+}
+function emgCut(){
+  ROOMS.forEach(function(r){ try{ db.ref('/rooms/'+r+'/state').set(false); }catch(e){} });
+  try{ db.ref('/emergency/cut_power').set(true); db.ref('/emergency/active').set(false); }catch(e){}
+  emgHide(); toast('🔌 전체 전기 차단 완료!');
+}
+function testEmg(){ emgShow(2450,'전력 사용량 2450W — 임계값(2000W) 초과!'); }
+
+// ── 전력 대시보드 ──
+function loadPower(){
+  try{
+    db.ref('/power').once('value', function(s){
+      var d=s.val()||{};
+      pwThreshVal=d.threshold||2000;
+      var ti=document.getElementById('pwThresh'); if(ti) ti.value=pwThreshVal;
+      updatePwHero(d.current_watt||0);
+    });
+  }catch(e){}
+}
+function updatePwHero(w){
+  var el=document.getElementById('pwNow'); if(el) el.textContent=Math.round(w);
+  var pct=Math.min(100,(w/pwThreshVal)*100);
+  var bar=document.getElementById('pwBar');
+  if(bar){ bar.style.width=pct+'%'; bar.className='pw-bar'+(pct>=90?' danger':pct>=70?' warn':''); }
+  var st=document.getElementById('pwStatus');
+  if(st) st.textContent=w===0?'⚪ 대기 중':pct<50?'🟢 정상 — '+Math.round(pct)+'% 사용 중':pct<80?'🟡 주의 — '+Math.round(pct)+'%':'🔴 위험 — 임계값 초과!';
+  if(w>pwPeak){ pwPeak=w; var pk=document.getElementById('pwPeak'); if(pk) pk.textContent=Math.round(pwPeak)+' W'; }
+  var b=document.getElementById('pwHdrBadge'); if(b) b.textContent=Math.round(w)+' W';
+}
+function savePwThresh(){
+  var v=parseInt(document.getElementById('pwThresh').value)||2000;
+  pwThreshVal=v;
+  try{ db.ref('/power/threshold').set(v); }catch(e){}
+  toast('임계값 '+v+'W 저장됐어요 ✅');
+}
+
+// ── AI 분석 ──
+async function runAI(){
+  var btn=document.getElementById('aiBtn');
+  var load=document.getElementById('aiLoad');
+  btn.disabled=true; load.style.display='block';
+  document.getElementById('aiStatBox').style.display='none';
+  document.getElementById('aiResultBox').style.display='none';
+  try{
+    document.getElementById('aiLoadTxt').textContent='Firebase 기록 수집 중...';
+    var aiLogs=await new Promise(function(res){
+      try{ db.ref('/logs').limitToLast(50).once('value',function(s){ var arr=[]; s.forEach(function(c){ arr.unshift(c.val()); }); res(arr); }); }catch(e){ res([]); }
+    });
+    if(!aiLogs.length){ toast('사용 기록이 없어요'); return; }
+    var rc={},hc={},uc={},onC=0,offC=0;
+    aiLogs.forEach(function(l){
+      if(l.room) rc[l.room]=(rc[l.room]||0)+1;
+      if(l.act==='켬'||l.act==='켜졌어요') onC++;
+      if(l.act==='끔'||l.act==='꺼졌어요') offC++;
+      if(l.user) uc[l.user]=(uc[l.user]||0)+1;
+      if(l.time){ var h=parseInt(l.time.split(':')[0]); if(!isNaN(h)) hc[h]=(hc[h]||0)+1; }
+    });
+    var mr=Object.entries(rc).sort(function(a,b){return b[1]-a[1];})[0]||['-'];
+    var ph=Object.entries(hc).sort(function(a,b){return b[1]-a[1];})[0]||['-'];
+    var mu=Object.entries(uc).sort(function(a,b){return b[1]-a[1];})[0]||['-'];
+    document.getElementById('aiTotal').textContent=aiLogs.length;
+    document.getElementById('aiRoom').textContent=mr[0];
+    document.getElementById('aiHour').textContent=ph[0]+'시';
+    document.getElementById('aiUser').textContent=mu[0];
+    document.getElementById('aiStatBox').style.display='block';
+    document.getElementById('aiLoadTxt').textContent='Claude AI 분석 중...';
+    var prompt='스마트홈 사용 데이터: 총 '+aiLogs.length+'회, 켜기 '+onC+'회/끄기 '+offC+'회, 가장 많이 사용한 방: '+mr[0]+', 주 사용 시간대: '+ph[0]+'시, 최다 사용자: '+mu[0]+'. 반드시 JSON으로만: {"pattern":"패턴분석","recommend":"추천사항","predict":"예측","warning":"주의사항"}';
+    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:prompt}]})});
+    var data=await res.json();
+    var text=(data.content&&data.content[0])?data.content[0].text:'{}';
+    var clean=text.replace(/```json|```/g,'').trim();
+    var si=clean.indexOf('{'),ei=clean.lastIndexOf('}');
+    var parsed=si>=0&&ei>=0?JSON.parse(clean.slice(si,ei+1)):{pattern:text,recommend:'-',predict:'-',warning:'-'};
+    document.getElementById('aiPattern').textContent=parsed.pattern||'-';
+    document.getElementById('aiRecommend').textContent=parsed.recommend||'-';
+    document.getElementById('aiPredict').textContent=parsed.predict||'-';
+    document.getElementById('aiWarning').textContent=parsed.warning||'-';
+    document.getElementById('aiResultBox').style.display='block';
+    toast('🤖 AI 분석 완료!');
+  }catch(e){ toast('분석 오류: '+e.message); }
+  finally{ btn.disabled=false; load.style.display='none'; }
+}
+
+// ── Firebase 예약/비상/전력 리스너 추가 ──
+var _fbExtraInit=false;
+function initFBExtra(){
+  if(_fbExtraInit) return; _fbExtraInit=true;
+  try{
+    db.ref('/schedules').on('value',function(s){
+      schedListArr=[];
+      s.forEach(function(c){ schedListArr.push({id:c.key,time:c.val().time,action:c.val().action}); });
+      if(document.getElementById('p-timer')&&document.getElementById('p-timer').classList.contains('show')) renderSched();
+    });
+    db.ref('/emergency').on('value',function(s){
+      var e=s.val();
+      if(e&&e.active) emgShow(e.watt||0,e.reason||'전력 이상 감지!');
+    });
+    db.ref('/power/current_watt').on('value',function(s){
+      var w=s.val()||0;
+      var b=document.getElementById('pwHdrBadge'); if(b) b.textContent=Math.round(w)+' W';
+      if(document.getElementById('p-power')&&document.getElementById('p-power').classList.contains('show')) updatePwHero(w);
+    });
+  }catch(e){}
+}
+
 function openDrw(){document.getElementById('drw').classList.add('open');document.getElementById('dovl').classList.add('open');}
 function closeDrw(){document.getElementById('drw').classList.remove('open');document.getElementById('dovl').classList.remove('open');}
 function nowStr(){const d=new Date();return'오늘 '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
