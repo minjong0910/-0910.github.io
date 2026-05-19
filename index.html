@@ -303,6 +303,47 @@ button,input{font-family:inherit;}
 #schedBox.show{transform:translateX(-50%) translateY(0);}
 #schedBar{position:absolute;bottom:0;left:0;height:4px;background:#4E7FD4;border-radius:0 0 16px 16px;width:100%;}
 #schedClose{background:#4E7FD4;border:none;color:#fff;font-size:11px;font-weight:800;padding:6px 12px;border-radius:8px;cursor:pointer;flex-shrink:0;}
+
+/* ── 멤버별 통계 ── */
+.stat-member{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:10px;}
+.stat-member-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.stat-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.stat-name{font-size:14px;font-weight:700;}
+.stat-total{font-size:11px;color:var(--tx2);margin-top:2px;}
+.stat-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.stat-bar-label{font-size:11px;color:var(--tx2);width:36px;flex-shrink:0;}
+.stat-bar-wrap{flex:1;background:var(--surf);border-radius:6px;height:8px;overflow:hidden;}
+.stat-bar-fill{height:100%;border-radius:6px;transition:width .8s ease;}
+.stat-bar-cnt{font-size:11px;color:var(--tx2);width:30px;text-align:right;flex-shrink:0;}
+
+/* ── 게스트 코드 ── */
+.guest-box{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:10px;}
+.guest-code{font-size:40px;font-weight:800;color:var(--gold);font-family:'DM Mono',monospace;letter-spacing:8px;text-align:center;padding:16px 0;}
+.guest-code-wrap{background:var(--surf);border-radius:12px;border:1.5px dashed var(--gold);margin:8px 0;}
+.guest-expire{font-size:11px;color:var(--tx2);text-align:center;margin-bottom:8px;}
+.guest-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--gold),#E8C87A);border:none;border-radius:10px;color:#0A0E1A;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:8px;}
+.guest-inp-row{display:flex;gap:8px;margin-top:10px;}
+.guest-inp{flex:1;background:var(--surf);border:1.5px solid var(--bdr);border-radius:8px;color:var(--tx);font-size:22px;font-weight:700;font-family:'DM Mono',monospace;text-align:center;padding:10px;letter-spacing:4px;}
+.guest-inp:focus{outline:none;border-color:var(--gold);}
+.guest-enter{padding:10px 16px;background:var(--on);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;}
+.guest-active{background:rgba(76,175,130,.15);border:1.5px solid var(--on);border-radius:12px;padding:12px;text-align:center;margin-top:8px;}
+
+/* ── 외출/귀가 모드 ── */
+.mode-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.mode-card{background:var(--card);border:1.5px solid var(--bdr);border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;}
+.mode-card:active{transform:scale(.96);}
+.mode-card.away{border-color:var(--off);}
+.mode-card.home{border-color:var(--on);}
+.mode-card-icon{font-size:32px;margin-bottom:8px;}
+.mode-card-title{font-size:13px;font-weight:800;}
+.mode-card-sub{font-size:10px;color:var(--tx2);margin-top:3px;}
+.mode-schedule{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:10px;}
+.mode-sch-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bdr);}
+.mode-sch-row:last-child{border-bottom:none;}
+.mode-sch-label{font-size:13px;font-weight:600;}
+.mode-sch-sub{font-size:11px;color:var(--tx2);margin-top:2px;}
+.mode-sch-inp{background:var(--surf);border:1.5px solid var(--gold);border-radius:8px;color:var(--gold);font-size:15px;font-weight:700;font-family:'DM Mono',monospace;text-align:center;padding:6px 10px;letter-spacing:2px;}
+.mode-active-banner{background:rgba(78,127,212,.15);border:1.5px solid var(--bl);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:10px;}
 </style>
 </head>
 <body>
@@ -509,6 +550,100 @@ button,input{font-family:inherit;}
     </div>
   </div>
 
+  <!-- 멤버별 통계 -->
+  <div class="page" id="pg-stat">
+    <div class="hdr"><div class="hl"><div class="bbtn" onclick="showPg('pg-home')">←</div><div><div class="htit">멤버별 통계</div><div class="hsub">누가 얼마나 사용했는지</div></div></div></div>
+    <div class="gbar"></div>
+    <div class="pcon">
+      <div class="stit">📊 멤버별 사용 통계</div>
+      <div id="statContent"><div class="empty">데이터 로딩 중...</div></div>
+    </div>
+  </div>
+
+  <!-- 게스트 코드 -->
+  <div class="page" id="pg-guest">
+    <div class="hdr"><div class="hl"><div class="bbtn" onclick="showPg('pg-home')">←</div><div><div class="htit">게스트 접근</div><div class="hsub">임시 접근 코드 관리</div></div></div></div>
+    <div class="gbar"></div>
+    <div class="pcon">
+      <div id="guestAdminSection" style="display:none">
+        <div class="stit">🔑 임시 접근 코드 발급</div>
+        <div class="guest-box">
+          <div style="font-size:12px;color:var(--tx2);margin-bottom:10px;">게스트에게 코드를 알려주세요. 24시간 후 자동 만료돼요.</div>
+          <div class="guest-code-wrap">
+            <div class="guest-code" id="guestCodeDisplay">------</div>
+            <div class="guest-expire" id="guestExpire">코드 없음</div>
+          </div>
+          <button class="guest-btn" onclick="genGuestCode()">🎲 새 코드 발급</button>
+          <button style="width:100%;padding:10px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;color:var(--tx2);font-size:12px;cursor:pointer;" onclick="revokeGuestCode()">코드 취소</button>
+        </div>
+      </div>
+      <div class="stit">🚪 코드 입력</div>
+      <div class="guest-box">
+        <div style="font-size:12px;color:var(--tx2);margin-bottom:10px;">6자리 코드를 입력하면 24시간 동안 제어할 수 있어요</div>
+        <div class="guest-inp-row">
+          <input class="guest-inp" id="guestInp" type="number" placeholder="000000" maxlength="6">
+          <button class="guest-enter" onclick="enterGuestCode()">입력</button>
+        </div>
+        <div id="guestActiveMsg" style="display:none" class="guest-active">
+          <div style="font-size:14px;font-weight:800;color:var(--on);">✅ 게스트 접근 활성화</div>
+          <div style="font-size:11px;color:var(--tx2);margin-top:4px;" id="guestActiveExpire"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 외출/귀가 모드 -->
+  <div class="page" id="pg-mode">
+    <div class="hdr"><div class="hl"><div class="bbtn" onclick="showPg('pg-home')">←</div><div><div class="htit">외출/귀가 모드</div><div class="hsub">자동 켜짐/꺼짐 설정</div></div></div></div>
+    <div class="gbar"></div>
+    <div class="pcon">
+      <div id="modeBanner" style="display:none" class="mode-active-banner">
+        <div style="font-size:22px;" id="modeBannerIcon">🏠</div>
+        <div><div style="font-size:13px;font-weight:700;" id="modeBannerTitle">모드 활성화됨</div><div style="font-size:11px;color:var(--tx2);" id="modeBannerSub"></div></div>
+      </div>
+      <div class="stit">모드 실행</div>
+      <div class="mode-cards">
+        <div class="mode-card away" onclick="runMode('away')">
+          <div class="mode-card-icon">🚶</div>
+          <div class="mode-card-title">외출 모드</div>
+          <div class="mode-card-sub">전체 꺼짐</div>
+        </div>
+        <div class="mode-card home" onclick="runMode('home')">
+          <div class="mode-card-icon">🏠</div>
+          <div class="mode-card-title">귀가 모드</div>
+          <div class="mode-card-sub">설정한 방 켜짐</div>
+        </div>
+      </div>
+      <div class="stit">⏰ 자동 실행 시간 설정</div>
+      <div class="mode-schedule">
+        <div class="mode-sch-row">
+          <div><div class="mode-sch-label">🚶 외출 시간</div><div class="mode-sch-sub">이 시간에 전체 자동 꺼짐</div></div>
+          <input type="time" class="mode-sch-inp" id="awayTime" value="08:00">
+        </div>
+        <div class="mode-sch-row">
+          <div><div class="mode-sch-label">🏠 귀가 시간</div><div class="mode-sch-sub">이 시간에 설정한 방 자동 켜짐</div></div>
+          <input type="time" class="mode-sch-inp" id="homeTime" value="18:00">
+        </div>
+      </div>
+      <div class="stit">귀가 시 켤 방 선택</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+        <label style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:12px 14px;cursor:pointer;">
+          <input type="checkbox" id="homeRoom-living" checked style="width:18px;height:18px;accent-color:var(--gold);">
+          <span style="font-size:14px;">🛋️ 거실</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:12px 14px;cursor:pointer;">
+          <input type="checkbox" id="homeRoom-bedroom" style="width:18px;height:18px;accent-color:var(--gold);">
+          <span style="font-size:14px;">🛏️ 안방</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:12px 14px;cursor:pointer;">
+          <input type="checkbox" id="homeRoom-bathroom" style="width:18px;height:18px;accent-color:var(--gold);">
+          <span style="font-size:14px;">🚿 화장실</span>
+        </label>
+      </div>
+      <button style="width:100%;padding:13px;background:linear-gradient(135deg,var(--gold),#E8C87A);border:none;border-radius:12px;color:#0A0E1A;font-size:14px;font-weight:800;cursor:pointer;" onclick="saveModeSchedule()">💾 자동 실행 시간 저장</button>
+    </div>
+  </div>
+
   <!-- AI -->
   <div class="page" id="pg-ai">
     <div class="hdr"><div class="hl"><div class="bbtn" onclick="showPg('pg-home')">←</div><div><div class="htit">AI 패턴 분석</div><div class="hsub">Claude AI 인사이트</div></div></div></div>
@@ -583,6 +718,9 @@ button,input{font-family:inherit;}
   <div class="ditm" onclick="showPg('pg-power');closeDrw()"><span class="dic">⚡</span>전력 대시보드</div>
   <div class="ditm" onclick="showPg('pg-timer');closeDrw()"><span class="dic">⏰</span>타이머 & 예약</div>
   <div class="ditm" onclick="showPg('pg-ai');closeDrw()"><span class="dic">🤖</span>AI 패턴 분석</div>
+  <div class="ditm" onclick="showPg('pg-stat');closeDrw()"><span class="dic">📊</span>멤버별 통계</div>
+  <div class="ditm" onclick="showPg('pg-guest');closeDrw()"><span class="dic">🔑</span>게스트 접근</div>
+  <div class="ditm" onclick="showPg('pg-mode');closeDrw()"><span class="dic">🚶</span>외출/귀가 모드</div>
   <div class="ditm" onclick="showPg('pg-hist');closeDrw()"><span class="dic">📋</span>사용 기록</div>
   <div class="ditm" onclick="showPg('pg-notif');closeDrw()"><span class="dic">🔔</span>알림 설정</div>
   <div class="ditm" onclick="showPg('pg-share');closeDrw()"><span class="dic">👥</span>공유 대상</div>
@@ -689,6 +827,9 @@ function showPg(id) {
   var tabMap = {'pg-home':'tab-home','pg-power':'tab-power','pg-timer':'tab-timer','pg-ai':'tab-ai','pg-hist':'tab-hist'};
   if (tabMap[id]) { var tb = document.getElementById(tabMap[id]); if(tb) tb.classList.add('on'); }
   if (id==='pg-hist') renderLogs();
+  if (id==='pg-stat') renderStat();
+  if (id==='pg-guest') renderGuest();
+  if (id==='pg-mode') renderMode();
   if (id==='pg-share') renderShare();
   if (id==='pg-power') loadPower();
   if (id==='pg-timer') renderSched();
@@ -744,7 +885,7 @@ function initFB() {
     if (b) b.textContent = Math.round(w)+' W';
     if (document.getElementById('pg-power').classList.contains('show')) updatePwHero(w);
   });
-  setTimeout(function(){ restoreTimer(); startSchedCheck(); }, 1500);
+  setTimeout(function(){ restoreTimer(); startSchedCheck(); startModeCheck(); }, 1500);
 }
 
 // ── 방 제어 ──
@@ -1146,6 +1287,222 @@ async function runAI(){
   finally{btn.disabled=false;load.style.display='none';}
 }
 
+
+// ══════════════════════════════════════
+// 멤버별 사용 통계
+// ══════════════════════════════════════
+function renderStat() {
+  var el = document.getElementById('statContent');
+  if (!el) return;
+  db.ref('/logs').limitToLast(200).once('value', function(s) {
+    var data = {}; // {name: {total, rooms:{r:cnt}, colors}}
+    s.forEach(function(c) {
+      var l = c.val();
+      if (!l.user) return;
+      if (!data[l.user]) data[l.user] = {total:0, rooms:{living:0,bedroom:0,bathroom:0}, emoji:l.emoji||'👤', color:l.color||'#C9A84C', bg:l.bg||'rgba(201,168,76,.15)'};
+      data[l.user].total++;
+      if (l.room && data[l.user].rooms[l.room] !== undefined) data[l.user].rooms[l.room]++;
+    });
+    if (!Object.keys(data).length) { el.innerHTML = '<div class="empty">아직 기록이 없어요</div>'; return; }
+    var colors = {'거실':'#C9A84C','안방':'#4E7FD4','화장실':'#4CAF82'};
+    el.innerHTML = Object.entries(data).sort(function(a,b){return b[1].total-a[1].total;}).map(function(e) {
+      var name = e[0], d = e[1];
+      var roomRows = Object.entries({living:'거실',bedroom:'안방',bathroom:'화장실'}).map(function(re) {
+        var rk=re[0], rn=re[1], cnt=d.rooms[rk]||0;
+        var pct = d.total ? Math.round(cnt/d.total*100) : 0;
+        return '<div class="stat-bar-row">'+
+          '<div class="stat-bar-label">'+rn+'</div>'+
+          '<div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:'+pct+'%;background:'+colors[rn]+'"></div></div>'+
+          '<div class="stat-bar-cnt">'+cnt+'회</div></div>';
+      }).join('');
+      return '<div class="stat-member">'+
+        '<div class="stat-member-hdr">'+
+          '<div class="stat-av" style="background:'+d.bg+';border:1px solid '+d.color+'">'+d.emoji+'</div>'+
+          '<div><div class="stat-name">'+name+'</div><div class="stat-total">총 '+d.total+'회 제어</div></div>'+
+        '</div>'+roomRows+'</div>';
+    }).join('');
+  });
+}
+
+// ══════════════════════════════════════
+// 게스트 임시 접근 코드
+// ══════════════════════════════════════
+var _guestMode = false;
+
+function renderGuest() {
+  var isAdmin = curUser && curUser.isAdmin;
+  var adminSec = document.getElementById('guestAdminSection');
+  if (adminSec) adminSec.style.display = isAdmin ? 'block' : 'none';
+  // 현재 게스트 코드 상태 로드
+  db.ref('/guestCode').once('value', function(s) {
+    var g = s.val();
+    var now = Date.now();
+    if (g && g.code && g.expire > now) {
+      if (isAdmin) {
+        document.getElementById('guestCodeDisplay').textContent = g.code;
+        var remain = Math.floor((g.expire - now) / 3600000);
+        document.getElementById('guestExpire').textContent = '만료까지 약 ' + remain + '시간 남음';
+      }
+    } else {
+      if (isAdmin) {
+        document.getElementById('guestCodeDisplay').textContent = '------';
+        document.getElementById('guestExpire').textContent = '코드 없음';
+      }
+    }
+    // 내가 게스트 세션 중인지 확인
+    var mySession = localStorage ? localStorage.getItem('guestSession') : null;
+    if (mySession && g && g.sessions && g.sessions[mySession] && g.sessions[mySession] > now) {
+      document.getElementById('guestActiveMsg').style.display = 'block';
+      var rem2 = Math.floor((g.sessions[mySession] - now) / 3600000);
+      document.getElementById('guestActiveExpire').textContent = '약 ' + rem2 + '시간 후 만료돼요';
+    }
+  });
+}
+
+function genGuestCode() {
+  var code = String(Math.floor(100000 + Math.random() * 900000));
+  var expire = Date.now() + 24 * 3600000; // 24시간
+  db.ref('/guestCode').set({ code: code, expire: expire, sessions: {} });
+  document.getElementById('guestCodeDisplay').textContent = code;
+  document.getElementById('guestExpire').textContent = '만료까지 약 24시간 남음';
+  toast('🔑 코드 발급됨: ' + code);
+}
+
+function revokeGuestCode() {
+  db.ref('/guestCode').remove();
+  document.getElementById('guestCodeDisplay').textContent = '------';
+  document.getElementById('guestExpire').textContent = '코드 없음';
+  toast('코드가 취소됐어요');
+}
+
+function enterGuestCode() {
+  var inp = document.getElementById('guestInp').value.trim();
+  if (inp.length !== 6) { toast('6자리 코드를 입력해주세요'); return; }
+  db.ref('/guestCode').once('value', function(s) {
+    var g = s.val();
+    var now = Date.now();
+    if (!g || g.code !== inp || g.expire <= now) {
+      toast('❌ 코드가 올바르지 않거나 만료됐어요'); return;
+    }
+    // 세션 ID 발급
+    var sessionId = 'sess_' + Date.now();
+    var sessionExpire = now + 24 * 3600000;
+    var update = {};
+    update['sessions/' + sessionId] = sessionExpire;
+    db.ref('/guestCode').update(update);
+    if (localStorage) localStorage.setItem('guestSession', sessionId);
+    _guestMode = true;
+    document.getElementById('guestActiveMsg').style.display = 'block';
+    document.getElementById('guestActiveExpire').textContent = '약 24시간 후 만료돼요';
+    toast('✅ 게스트 접근 활성화됐어요!');
+    // 게스트도 제어 가능하도록 curUser 임시 설정
+    if (!curUser) curUser = {name:'게스트',emoji:'👤',color:'#4E7FD4',bg:'rgba(78,127,212,.15)',isAdmin:false};
+  });
+}
+
+// ══════════════════════════════════════
+// 외출/귀가 모드
+// ══════════════════════════════════════
+var _modeCheckIv = null;
+var _modeFired = {};
+var _currentMode = null;
+
+function renderMode() {
+  // Firebase 에서 저장된 시간 로드
+  db.ref('/modeSchedule').once('value', function(s) {
+    var d = s.val() || {};
+    if (d.awayTime) document.getElementById('awayTime').value = d.awayTime;
+    if (d.homeTime) document.getElementById('homeTime').value = d.homeTime;
+    if (d.homeRooms) {
+      ['living','bedroom','bathroom'].forEach(function(r) {
+        var el = document.getElementById('homeRoom-'+r);
+        if (el) el.checked = d.homeRooms[r] !== false;
+      });
+    }
+    // 현재 모드 배너
+    updateModeBanner();
+  });
+}
+
+function saveModeSchedule() {
+  var homeRooms = {};
+  ['living','bedroom','bathroom'].forEach(function(r) {
+    var el = document.getElementById('homeRoom-'+r);
+    homeRooms[r] = el ? el.checked : false;
+  });
+  db.ref('/modeSchedule').set({
+    awayTime: document.getElementById('awayTime').value,
+    homeTime: document.getElementById('homeTime').value,
+    homeRooms: homeRooms
+  });
+  toast('💾 자동 실행 시간 저장됐어요 ✅');
+  if (!_modeCheckIv) startModeCheck();
+}
+
+function runMode(mode) {
+  _currentMode = mode;
+  if (mode === 'away') {
+    ROOMS.forEach(function(r) { db.ref('/rooms/'+r+'/state').set(false); });
+    db.ref('/logs').push({user:curUser?curUser.name:'시스템',emoji:'🚶',color:'#C9504C',bg:'rgba(201,80,76,.15)',room:'집안 전체',act:'끔',time:nowStr(),timestamp:Date.now()});
+    showModeBanner('away');
+    toast('🚶 외출 모드 — 전체 꺼졌어요');
+  } else {
+    db.ref('/modeSchedule/homeRooms').once('value', function(s) {
+      var rooms = s.val() || {living:true};
+      ROOMS.forEach(function(r) {
+        if (rooms[r]) db.ref('/rooms/'+r+'/state').set(true);
+      });
+      db.ref('/logs').push({user:curUser?curUser.name:'시스템',emoji:'🏠',color:'#4CAF82',bg:'rgba(76,175,130,.15)',room:'집안 전체',act:'켬',time:nowStr(),timestamp:Date.now()});
+      showModeBanner('home');
+      toast('🏠 귀가 모드 — 켜졌어요!');
+    });
+  }
+}
+
+function showModeBanner(mode) {
+  var banner = document.getElementById('modeBanner');
+  var icon = document.getElementById('modeBannerIcon');
+  var title = document.getElementById('modeBannerTitle');
+  var sub = document.getElementById('modeBannerSub');
+  if (!banner) return;
+  banner.style.display = 'flex';
+  if (mode === 'away') {
+    icon.textContent = '🚶'; title.textContent = '외출 모드 활성화'; sub.textContent = '전체 전등이 꺼졌어요';
+    banner.style.background = 'rgba(201,80,76,.15)'; banner.style.borderColor = 'var(--off)';
+  } else {
+    icon.textContent = '🏠'; title.textContent = '귀가 모드 활성화'; sub.textContent = '설정한 방이 켜졌어요';
+    banner.style.background = 'rgba(76,175,130,.15)'; banner.style.borderColor = 'var(--on)';
+  }
+}
+
+function updateModeBanner() {
+  if (_currentMode) showModeBanner(_currentMode);
+}
+
+function startModeCheck() {
+  if (_modeCheckIv) return;
+  _modeCheckIv = setInterval(function() {
+    var d = new Date(), cur = pad(d.getHours())+':'+pad(d.getMinutes());
+    db.ref('/modeSchedule').once('value', function(s) {
+      var ms = s.val();
+      if (!ms) return;
+      if (ms.awayTime && ms.awayTime === cur && !_modeFired['away_'+cur]) {
+        _modeFired['away_'+cur] = true;
+        runMode('away');
+        schedShow(cur, false); // 예약 배너 재활용
+      }
+      if (ms.homeTime && ms.homeTime === cur && !_modeFired['home_'+cur]) {
+        _modeFired['home_'+cur] = true;
+        runMode('home');
+        schedShow(cur, true);
+      }
+      // fired 캐시 정리
+      if (Object.keys(_modeFired).length > 20) _modeFired = {};
+    });
+  }, 5000);
+}
+
+// initFB 시작 시 모드 스케줄 체커도 시작
 // ── 토스트 ──
 var _tt;
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(function(){t.classList.remove('show');},2400);}
