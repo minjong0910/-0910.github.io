@@ -1025,8 +1025,7 @@ function initFB(){
   // 전력 데이터 실시간 감지
   db.ref('/power/current_watt').on('value', snap => {
     const w = snap.val() || 0;
-    const el = document.getElementById('powerBadge');
-    if (el) el.textContent = Math.round(w) + 'W';
+    // powerBadge 는 제거됨 (헤더 배지로 대체)
   });
 
   // 예약 목록 실시간 로드
@@ -1152,6 +1151,22 @@ function updateSummary(){
 }
 
 // ── 사용 기록 ──
+
+// ── 사용 기록 추가 ──
+function addLog(user, act, room) {
+  try {
+    const now = new Date();
+    const time = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    db.ref('/logs').push({
+      user: user || '시스템',
+      act:  act  || '-',
+      room: room || '-',
+      time: time,
+      ts:   Date.now()
+    });
+  } catch(e) { console.log('addLog 오류:', e); }
+}
+
 function renderLogs(){
   const el=document.getElementById('llist');
   if(!logs.length){el.innerHTML='<div class="empty">아직 기록이 없어요</div>';return;}
@@ -2106,8 +2121,7 @@ function initPowerListener() {
         }
       }
       // 홈 화면 전력 배지 업데이트
-      const badge = document.getElementById('powerBadge');
-      if (badge) badge.textContent = Math.round(w) + 'W';
+      // powerBadge 는 제거됨
       const hdrBadge = document.getElementById('powerBadgeHdr');
       if (hdrBadge) hdrBadge.textContent = Math.round(w) + ' W';
     });
