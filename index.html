@@ -385,6 +385,84 @@ button,input{font-family:inherit;}
 .house-selector{background:var(--surf);border-bottom:1px solid var(--bdr);padding:8px 16px;display:flex;align-items:center;gap:8px;flex-shrink:0;cursor:pointer;}
 .house-sel-name{font-size:12px;font-weight:700;color:var(--gold);}
 .house-sel-arrow{font-size:10px;color:var(--tx2);}
+
+/* ── 취침 전 확인리스트 ── */
+#checklistBox{
+  display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+  z-index:999990;background:rgba(0,0,0,.85);
+  align-items:center;justify-content:center;padding:20px;
+}
+#checklistBox.show{display:flex;}
+.checklist-modal{
+  background:#0F1528;border:2px solid #C9A84C;border-radius:20px;
+  padding:20px;width:100%;max-width:340px;
+}
+.checklist-title{
+  font-size:17px;font-weight:800;color:var(--gold);
+  text-align:center;margin-bottom:4px;
+}
+.checklist-sub{
+  font-size:12px;color:var(--tx2);text-align:center;
+  margin-bottom:16px;line-height:1.6;
+}
+.checklist-item{
+  background:var(--card);border:1.5px solid var(--bdr);
+  border-radius:14px;padding:14px 16px;margin-bottom:10px;
+  display:flex;align-items:center;gap:12px;cursor:pointer;
+  transition:all .2s;
+}
+.checklist-item:active{transform:scale(.97);}
+.checklist-item.checked{
+  border-color:var(--on);background:rgba(76,175,130,.12);
+}
+.checklist-item.checked .ci-box{
+  background:var(--on);border-color:var(--on);
+}
+.checklist-item.checked .ci-box::after{content:'✓';color:white;}
+.ci-box{
+  width:26px;height:26px;border-radius:7px;
+  border:2px solid var(--bdr);background:var(--card2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:800;flex-shrink:0;transition:all .2s;
+}
+.ci-icon{font-size:22px;flex-shrink:0;}
+.ci-txt{flex:1;}
+.ci-label{font-size:14px;font-weight:700;}
+.ci-sub{font-size:11px;color:var(--tx2);margin-top:2px;}
+.checklist-progress{
+  background:var(--surf);border-radius:8px;height:8px;
+  overflow:hidden;margin:12px 0;
+}
+.checklist-progress-bar{
+  height:100%;background:linear-gradient(90deg,var(--on),#7FD4A0);
+  border-radius:8px;transition:width .4s ease;width:0%;
+}
+.checklist-progress-txt{
+  font-size:11px;color:var(--tx2);text-align:center;margin-bottom:14px;
+}
+.checklist-off-btn{
+  width:100%;padding:14px;background:var(--card2);
+  border:1.5px solid var(--bdr);border-radius:14px;
+  color:var(--tx2);font-size:14px;font-weight:800;cursor:not-allowed;
+  transition:all .3s;
+}
+.checklist-off-btn.ready{
+  background:linear-gradient(135deg,#4E7FD4,#2E5BAA);
+  border-color:var(--bl);color:white;cursor:pointer;
+}
+.checklist-skip{
+  width:100%;padding:10px;background:none;border:none;
+  color:var(--tx3);font-size:12px;cursor:pointer;margin-top:8px;
+}
+
+/* ── 예약 방 선택 ── */
+.sched-room-btn{
+  background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;
+  padding:10px;display:flex;align-items:center;justify-content:center;
+  gap:7px;cursor:pointer;transition:all .2s;
+}
+.sched-room-btn:active{transform:scale(.95);}
+.sched-room-btn.sel{border-color:var(--gold);background:var(--gd);}
 </style>
 </head>
 <body>
@@ -579,14 +657,38 @@ button,input{font-family:inherit;}
       <button class="ttest" onclick="testNotif()">🔔 알림 테스트</button>
       <div class="stit" style="margin-top:16px;">📅 예약 제어</div>
       <div class="sched-box">
-        <div style="font-size:12px;color:var(--tx2);margin-bottom:10px;">특정 시간에 자동으로 켜거나 끌 수 있어요</div>
-        <input type="time" class="stime-inp" id="schedTime" value="07:00">
-        <div class="sarow">
+        <div style="font-size:12px;color:var(--tx2);margin-bottom:12px;">시간과 방을 선택하면 지정된 시간에 자동으로 켜지거나 꺼져요</div>
+
+        <!-- 시간 설정 -->
+        <div style="font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:6px;">⏰ 시간 설정</div>
+        <input type="time" class="stime-inp" id="schedTime" value="07:00" style="margin-bottom:12px;">
+
+        <!-- 켜기/끄기 -->
+        <div style="font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:6px;">동작 선택</div>
+        <div class="sarow" style="margin-bottom:12px;">
           <div class="tact" id="sa-off" onclick="setSA('off')"><div class="tact-i">🌙</div><div class="tact-l">끄기</div></div>
           <div class="tact sel" id="sa-on" onclick="setSA('on')"><div class="tact-i">💡</div><div class="tact-l">켜기</div></div>
         </div>
+
+        <!-- 방 선택 -->
+        <div style="font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:8px;">방 선택 (켜기 시 적용)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;">
+          <div class="sched-room-btn sel" id="sr-all" onclick="toggleSchedRoom('all')">
+            <span style="font-size:16px;">🏠</span><span style="font-size:12px;font-weight:700;">전체</span>
+          </div>
+          <div class="sched-room-btn" id="sr-living" onclick="toggleSchedRoom('living')">
+            <span style="font-size:16px;">🛋️</span><span style="font-size:12px;font-weight:700;">거실</span>
+          </div>
+          <div class="sched-room-btn" id="sr-bedroom" onclick="toggleSchedRoom('bedroom')">
+            <span style="font-size:16px;">🛏️</span><span style="font-size:12px;font-weight:700;">안방</span>
+          </div>
+          <div class="sched-room-btn" id="sr-bathroom" onclick="toggleSchedRoom('bathroom')">
+            <span style="font-size:16px;">🚿</span><span style="font-size:12px;font-weight:700;">화장실</span>
+          </div>
+        </div>
+
         <button class="sadd" onclick="addSched()">+ 예약 추가</button>
-        <div id="schedList" style="margin-top:10px;"></div>
+        <div id="schedList" style="margin-top:12px;"></div>
       </div>
     </div>
   </div>
@@ -898,6 +1000,60 @@ button,input{font-family:inherit;}
   <div id="tnBar"></div>
 </div>
 
+<!-- 취침 전 확인리스트 -->
+<div id="checklistBox">
+  <div class="checklist-modal">
+    <div class="checklist-title">🌙 취침 전 확인리스트</div>
+    <div class="checklist-sub">아래 항목을 직접 확인하고 체크해주세요<br>모두 체크하면 전등을 끌 수 있어요</div>
+
+    <div class="checklist-item" id="ci-gas" onclick="toggleCheck('gas')">
+      <div class="ci-box" id="cb-gas"></div>
+      <div class="ci-icon">🔥</div>
+      <div class="ci-txt">
+        <div class="ci-label">가스 잠금</div>
+        <div class="ci-sub">가스 밸브가 잠겨있는지 확인</div>
+      </div>
+    </div>
+
+    <div class="checklist-item" id="ci-door" onclick="toggleCheck('door')">
+      <div class="ci-box" id="cb-door"></div>
+      <div class="ci-icon">🚪</div>
+      <div class="ci-txt">
+        <div class="ci-label">현관문 잠금</div>
+        <div class="ci-sub">현관문이 잠겨있는지 확인</div>
+      </div>
+    </div>
+
+    <div class="checklist-item" id="ci-window" onclick="toggleCheck('window')">
+      <div class="ci-box" id="cb-window"></div>
+      <div class="ci-icon">🪟</div>
+      <div class="ci-txt">
+        <div class="ci-label">창문 닫기</div>
+        <div class="ci-sub">모든 창문이 닫혀있는지 확인</div>
+      </div>
+    </div>
+
+    <div class="checklist-item" id="ci-charger" onclick="toggleCheck('charger')">
+      <div class="ci-box" id="cb-charger"></div>
+      <div class="ci-icon">🔌</div>
+      <div class="ci-txt">
+        <div class="ci-label">충전기 연결</div>
+        <div class="ci-sub">핸드폰 충전기 연결 확인</div>
+      </div>
+    </div>
+
+    <div class="checklist-progress">
+      <div class="checklist-progress-bar" id="checkProgressBar"></div>
+    </div>
+    <div class="checklist-progress-txt" id="checkProgressTxt">0 / 4 확인됨</div>
+
+    <button class="checklist-off-btn" id="checkOffBtn" onclick="checkAndTurnOff()">
+      🌙 전등 끄기 (확인 후 활성화)
+    </button>
+    <button class="checklist-skip" onclick="checkSkip()">건너뛰고 그냥 끄기</button>
+  </div>
+</div>
+
 <!-- 비상 배너 -->
 <div id="emgBox" style="display:none">
   <div class="emg-t">
@@ -1202,6 +1358,24 @@ function setTA(act) {
   document.getElementById('tact-off').classList.toggle('sel',act==='off');
   document.getElementById('tact-on').classList.toggle('sel',act==='on');
 }
+function toggleSchedRoom(key) {
+  if (key === 'all') {
+    // 전체 선택 시 나머지 해제
+    schedRooms = {all:true, living:false, bedroom:false, bathroom:false};
+  } else {
+    schedRooms.all = false;
+    schedRooms[key] = !schedRooms[key];
+    // 아무것도 안 선택되면 전체로 복귀
+    var anySelected = schedRooms.living || schedRooms.bedroom || schedRooms.bathroom;
+    if (!anySelected) schedRooms = {all:true, living:false, bedroom:false, bathroom:false};
+  }
+  // UI 업데이트
+  ['all','living','bedroom','bathroom'].forEach(function(k) {
+    var el = document.getElementById('sr-'+k);
+    if (el) el.classList.toggle('sel', schedRooms[k]);
+  });
+}
+
 function setSA(act) {
   schedAct = act;
   document.getElementById('sa-off').classList.toggle('sel',act==='off');
@@ -1235,10 +1409,15 @@ function tickTimer() {
     document.getElementById('ttgt').textContent='';
     document.getElementById('tStartBtn').style.display='block';
     document.getElementById('tStopBtn').style.display='none';
-    var ns = timerAct==='on';
-    ROOMS.forEach(function(r){ db.ref('/rooms/'+r+'/state').set(ns); });
     db.ref('/timer/active').set(false);
-    tnShow(timerAct==='off'?'🌙':'💡','타이머 완료!',timerAct==='off'?'전체 꺼졌어요':'전체 켜졌어요');
+    if (timerAct === 'off') {
+      // 외출 모드면 확인리스트 먼저 표시
+      showChecklist();
+    } else {
+      var ns = true;
+      ROOMS.forEach(function(r){ db.ref('/rooms/'+r+'/state').set(ns); });
+      tnShow('💡','타이머 완료!','전체 켜졌어요');
+    }
   }
 }
 function stopTimer() {
@@ -1269,11 +1448,25 @@ function restoreTimer() {
 
 // ── 예약 ──
 function addSched() {
-  var time=document.getElementById('schedTime').value;
-  if(!time){toast('시간을 선택해주세요');return;}
-  var id=Date.now().toString();
-  db.ref('/schedules/'+id).set({id:id,time:time,action:schedAct});
-  toast('✅ '+time+' '+(schedAct==='on'?'켜기':'끄기')+' 예약 추가');
+  var time = document.getElementById('schedTime').value;
+  if (!time) { toast('시간을 선택해주세요'); return; }
+  var id = Date.now().toString();
+  // 선택된 방 목록
+  var selectedRooms = [];
+  if (schedRooms.all) {
+    selectedRooms = ['living','bedroom','bathroom'];
+  } else {
+    if (schedRooms.living)  selectedRooms.push('living');
+    if (schedRooms.bedroom) selectedRooms.push('bedroom');
+    if (schedRooms.bathroom) selectedRooms.push('bathroom');
+  }
+  var roomLabel = schedRooms.all ? '전체' :
+    selectedRooms.map(function(r){ return RNAME[r]; }).join('+');
+  db.ref('/schedules/'+id).set({
+    id:id, time:time, action:schedAct,
+    rooms: selectedRooms, roomLabel: roomLabel
+  });
+  toast('✅ '+time+' '+roomLabel+' '+(schedAct==='on'?'켜기':'끄기')+' 예약 추가!');
 }
 function delSched(id){ db.ref('/schedules/'+id).remove(); toast('예약 삭제됐어요'); }
 function renderSched() {
@@ -1287,6 +1480,7 @@ function renderSched() {
   }).join('');
 }
 var schedCheckIv=null;
+var schedRooms = {all:true, living:false, bedroom:false, bathroom:false};
 var _schedVibInt=null, _schedAutoHide=null;
 var _firedTimes = {};  // {시간: true} 형태로 이미 실행된 예약 기록
 function startSchedCheck(){
@@ -2229,6 +2423,97 @@ function startModeCheck() {
 }
 
 // initFB 시작 시 모드 스케줄 체커도 시작
+
+// ══════════════════════════════════════
+// 취침 전 확인리스트
+// ══════════════════════════════════════
+var _checkItems = {gas:false, door:false, window:false, charger:false};
+var _checkTotal = 4;
+
+function showChecklist() {
+  // 체크 초기화
+  _checkItems = {gas:false, door:false, window:false, charger:false};
+  ['gas','door','window','charger'].forEach(function(k) {
+    var item = document.getElementById('ci-'+k);
+    var box  = document.getElementById('cb-'+k);
+    if (item) item.classList.remove('checked');
+    if (box)  box.textContent = '';
+  });
+  updateCheckProgress();
+  // 모달 표시
+  var box = document.getElementById('checklistBox');
+  if (box) box.classList.add('show');
+}
+
+function toggleCheck(key) {
+  _checkItems[key] = !_checkItems[key];
+  var item = document.getElementById('ci-'+key);
+  var box  = document.getElementById('cb-'+key);
+  if (item) item.classList.toggle('checked', _checkItems[key]);
+  if (box)  box.textContent = _checkItems[key] ? '' : '';
+  // 진동 피드백
+  try { if(navigator.vibrate) navigator.vibrate(30); } catch(e) {}
+  updateCheckProgress();
+}
+
+function updateCheckProgress() {
+  var cnt = Object.values(_checkItems).filter(Boolean).length;
+  var pct = (cnt / _checkTotal) * 100;
+  var bar = document.getElementById('checkProgressBar');
+  var txt = document.getElementById('checkProgressTxt');
+  var btn = document.getElementById('checkOffBtn');
+  if (bar) bar.style.width = pct + '%';
+  if (txt) txt.textContent = cnt + ' / ' + _checkTotal + ' 확인됨' + (cnt===_checkTotal?' ✅':'');
+  if (btn) {
+    if (cnt === _checkTotal) {
+      btn.className = 'checklist-off-btn ready';
+      btn.textContent = '🌙 전등 끄기';
+    } else {
+      btn.className = 'checklist-off-btn';
+      btn.textContent = '🌙 전등 끄기 (' + cnt + '/4 확인됨)';
+    }
+  }
+}
+
+function checkAndTurnOff() {
+  var cnt = Object.values(_checkItems).filter(Boolean).length;
+  if (cnt < _checkTotal) {
+    toast('아직 ' + (_checkTotal-cnt) + '개 항목을 확인하지 않았어요!');
+    // 안 체크된 항목 흔들기
+    ['gas','door','window','charger'].forEach(function(k) {
+      if (!_checkItems[k]) {
+        var el = document.getElementById('ci-'+k);
+        if (el) {
+          el.style.border = '1.5px solid var(--off)';
+          setTimeout(function(){ el.style.border = '1.5px solid var(--bdr)'; }, 1000);
+        }
+      }
+    });
+    return;
+  }
+  // 모두 체크됨 → 전등 끄기
+  hideChecklist();
+  ROOMS.forEach(function(r){ db.ref('/rooms/'+r+'/state').set(false); });
+  db.ref('/logs').push({
+    user: curUser?curUser.name:'타이머',
+    emoji: '🌙', color:'#C9A84C', bg:'rgba(201,168,76,.15)',
+    room:'집안 전체', act:'끔', time:nowStr(), timestamp:Date.now()
+  });
+  tnShow('🌙','확인리스트 완료!','모두 확인하고 전등을 껐어요 😊');
+  toast('🌙 확인 완료! 전체 전등이 꺼졌어요');
+}
+
+function checkSkip() {
+  hideChecklist();
+  ROOMS.forEach(function(r){ db.ref('/rooms/'+r+'/state').set(false); });
+  toast('🌙 전체 전등 꺼졌어요');
+}
+
+function hideChecklist() {
+  var box = document.getElementById('checklistBox');
+  if (box) box.classList.remove('show');
+}
+
 // ── 토스트 ──
 var _tt;
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(function(){t.classList.remove('show');},2400);}
