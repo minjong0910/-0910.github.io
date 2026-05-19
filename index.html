@@ -978,19 +978,23 @@ function renderSched() {
 }
 var schedCheckIv=null;
 var _schedVibInt=null, _schedAutoHide=null;
+var _lastSchedFired = '';  // 같은 분에 중복 실행 방지
 function startSchedCheck(){
   if(schedCheckIv)return;
+  // 10초마다 체크 — 시간을 놓치지 않음
   schedCheckIv=setInterval(function(){
     var d=new Date(),cur=pad(d.getHours())+':'+pad(d.getMinutes());
+    if(cur===_lastSchedFired) return;  // 이미 이 분에 실행됨
     schedArr.forEach(function(s){
       if(s.time===cur){
+        _lastSchedFired=cur;  // 이 분은 실행됨으로 표시
         var ns=s.action==='on';
         ROOMS.forEach(function(r){db.ref('/rooms/'+r+'/state').set(ns);});
         db.ref('/logs').push({user:'예약',emoji:'📅',color:'#4E7FD4',bg:'rgba(78,127,212,.15)',room:'집안 전체',act:ns?'켬':'끔',time:nowStr(),timestamp:Date.now()});
         schedShow(s.time, ns);
       }
     });
-  },60000);
+  },10000);  // 10초마다 — 시간 절대 안 놓침
 }
 function schedShow(time, isOn){
   var box = document.getElementById('schedBox');
