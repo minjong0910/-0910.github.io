@@ -180,31 +180,30 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 .empty{text-align:center;padding:28px 20px;color:var(--tx2);font-size:13px;}
 
 /* ── 타이머 완료 알림 배너 ── */
-.timer-notif{
-  position:fixed;top:-120px;left:50%;transform:translateX(-50%);
+#tnBox{
+  position:fixed;left:50%;transform:translateX(-50%);
+  top:-140px;
   z-index:99999;
-  background:linear-gradient(135deg,#1C2A45,#0A1020);
-  border:2px solid var(--gold);border-radius:18px;
-  padding:14px 18px;display:flex;align-items:center;gap:12px;
-  box-shadow:0 8px 40px rgba(0,0,0,.8), 0 0 0 1px rgba(201,168,76,.2);
-  transition:top .4s cubic-bezier(.34,1.56,.64,1);
-  min-width:280px;max-width:92vw;width:360px;}
-.timer-notif.show{top:16px;}
-.timer-notif-icon{font-size:28px;flex-shrink:0;animation:ticonpop .5s ease;}
-@keyframes ticonpop{0%{transform:scale(0);}70%{transform:scale(1.3);}100%{transform:scale(1);}}
-.timer-notif-body{flex:1;min-width:0;}
-.timer-notif-title{font-size:13px;font-weight:800;color:var(--gold);
-  margin-bottom:3px;font-family:'DM Sans','Noto Sans KR',sans-serif;}
-.timer-notif-msg{font-size:11.5px;color:var(--tx2);line-height:1.5;}
-.timer-notif-bar{position:absolute;bottom:0;left:0;height:3px;
-  background:var(--gold);border-radius:0 0 18px 18px;
-  animation:notifbar 8s linear forwards;}
-@keyframes notifbar{0%{width:100%;}100%{width:0%;}}
-.timer-notif-close{background:rgba(255,255,255,.07);border:1px solid var(--bdr);
-  color:var(--tx2);font-size:14px;font-weight:700;
-  cursor:pointer;padding:6px 10px;flex-shrink:0;
-  border-radius:8px;line-height:1;transition:all .15s;}
-.timer-notif-close:hover{background:rgba(255,255,255,.15);color:var(--tx);}
+  background:#1C2A45;
+  border:2px solid #C9A84C;
+  border-radius:16px;
+  padding:14px 16px;
+  display:flex;align-items:center;gap:12px;
+  width:330px;max-width:92vw;
+  box-shadow:0 8px 32px rgba(0,0,0,.7);
+  transition:top 0.4s ease;
+}
+#tnBox.show{top:14px;}
+#tnIcon{font-size:26px;flex-shrink:0;}
+#tnBody{flex:1;}
+#tnTitle{font-size:13px;font-weight:800;color:#C9A84C;margin-bottom:3px;}
+#tnMsg{font-size:11px;color:#8A9BB8;line-height:1.5;}
+#tnClose{background:rgba(255,255,255,.1);border:1px solid #2A3354;
+  color:#8A9BB8;font-size:15px;font-weight:700;
+  width:30px;height:30px;border-radius:8px;
+  cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+#tnBar{position:absolute;bottom:0;left:0;height:3px;
+  background:#C9A84C;border-radius:0 0 16px 16px;width:100%;}
 
 /* ── 타이머 페이지 ── */
 .timer-hero{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:20px 16px;margin-bottom:12px;text-align:center;}
@@ -996,48 +995,60 @@ let schedListArr   = [];
 let schedChecker   = null;
 
 // ── 타이머 완료 알림 배너 ──
-let notifTimer = null;
-function showTimerNotif(icon, title, msg) {
-  const el  = document.getElementById('timerNotif');
-  const bar = document.getElementById('timerNotifBar');
+let _tnTimer = null;
+let _tnBarTimer = null;
 
-  document.getElementById('timerNotifIcon').textContent  = icon;
-  document.getElementById('timerNotifTitle').textContent = title;
-  document.getElementById('timerNotifMsg').textContent   = msg;
+function tnShow(icon, title, msg) {
+  const box   = document.getElementById('tnBox');
+  const bar   = document.getElementById('tnBar');
+  const iEl   = document.getElementById('tnIcon');
+  const tEl   = document.getElementById('tnTitle');
+  const mEl   = document.getElementById('tnMsg');
+  if (!box) return;
 
-  // 강제로 위로 숨긴 뒤 show 추가 (애니메이션 재시작 보장)
-  el.classList.remove('show');
-  el.style.top = '-120px';
+  iEl.textContent = icon;
+  tEl.textContent = title;
+  mEl.textContent = msg;
 
-  // 진행 바 리셋
+  // 진행바 초기화
   if (bar) {
-    bar.style.animation = 'none';
-    void bar.offsetWidth; // reflow 강제
-    bar.style.animation = 'notifbar 8s linear forwards';
+    bar.style.transition = 'none';
+    bar.style.width = '100%';
   }
 
-  // 한 프레임 뒤에 show 추가 → 슬라이드 내려오는 애니메이션 실행
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      el.style.top = '';
-      el.classList.add('show');
-    });
-  });
+  // 위로 숨기고 → 다음 프레임에 내려오기
+  box.style.top = '-140px';
+  box.classList.remove('show');
+
+  setTimeout(() => {
+    box.classList.add('show');
+    // 진행바 줄어들기 시작
+    if (bar) {
+      setTimeout(() => {
+        bar.style.transition = 'width 8s linear';
+        bar.style.width = '0%';
+      }, 50);
+    }
+  }, 30);
 
   // 8초 후 자동 숨김
-  clearTimeout(notifTimer);
-  notifTimer = setTimeout(closeTimerNotif, 8000);
+  clearTimeout(_tnTimer);
+  _tnTimer = setTimeout(tnHide, 8000);
 
   // 진동 (모바일)
-  if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+  try { if (navigator.vibrate) navigator.vibrate([200,100,200]); } catch(e) {}
 }
-function testNotif() {
-  showTimerNotif('⏰', '알림 테스트', '타이머 완료 시 이런 알림이 떠요!');
+
+function tnHide() {
+  const box = document.getElementById('tnBox');
+  if (box) box.classList.remove('show');
+  clearTimeout(_tnTimer);
 }
-function closeTimerNotif() {
-  document.getElementById('timerNotif').classList.remove('show');
-  clearTimeout(notifTimer);
-}
+
+// 기존 코드와 호환되도록 별칭 유지
+function showTimerNotif(icon, title, msg) { tnShow(icon, title, msg); }
+function closeTimerNotif() { tnHide(); }
+function testNotif() { tnShow('⏰', '알림 테스트!', '타이머 완료 시 이런 알림이 떠요 😊'); }
 
 // ── 실시간 미리보기 ──
 function livePreview() {
@@ -1337,5 +1348,17 @@ if('serviceWorker' in navigator){
   });
 }
 </script>
+
+<!-- ══ 타이머 완료 알림 배너 ══ -->
+<div id="tnBox">
+  <div id="tnIcon">⏰</div>
+  <div id="tnBody">
+    <div id="tnTitle">타이머 완료</div>
+    <div id="tnMsg">설정한 시간이 됐어요</div>
+  </div>
+  <button id="tnClose" onclick="tnHide()">✕</button>
+  <div id="tnBar"></div>
+</div>
+
 </body>
 </html>
