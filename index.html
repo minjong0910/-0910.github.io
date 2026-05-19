@@ -843,7 +843,7 @@ function tickTimer() {
     var ns = timerAct==='on';
     ROOMS.forEach(function(r){ db.ref('/rooms/'+r+'/state').set(ns); });
     db.ref('/timer/active').set(false);
-    tnShow(timerAct==='off'?'🌙':'💡','타이머 완료!',timerAct==='off'?'전체 꺼졌어요','전체 켜졌어요');
+    tnShow(timerAct==='off'?'🌙':'💡','타이머 완료!',timerAct==='off'?'전체 꺼졌어요':'전체 켜졌어요');
   }
 }
 function stopTimer() {
