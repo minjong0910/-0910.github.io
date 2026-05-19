@@ -136,8 +136,8 @@ button,input{font-family:inherit;}
 .dic{font-size:17px;width:21px;text-align:center;}
 
 /* 토스트 */
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card2);border:1px solid var(--bdr);border-radius:12px;padding:10px 18px;font-size:13px;color:var(--tx);white-space:nowrap;z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;max-width:90vw;text-align:center;}
-.toast.show{transform:translateX(-50%) translateY(0);}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(80px);opacity:0;background:var(--card2);border:1px solid var(--bdr);border-radius:12px;padding:10px 18px;font-size:13px;color:var(--tx);white-space:nowrap;z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s;pointer-events:none;max-width:90vw;text-align:center;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 
 /* 로그 */
 .litem{background:var(--card);border:1px solid var(--bdr);border-radius:13px;padding:12px;display:flex;align-items:flex-start;gap:10px;margin-bottom:7px;}
@@ -260,14 +260,14 @@ button,input{font-family:inherit;}
 .ai-card-c{font-size:13px;color:var(--tx);line-height:1.7;}
 
 /* 타이머 배너 */
-#tnBox{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-200px);visibility:hidden;z-index:99999;background:#1C2A45;border:2px solid #C9A84C;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;width:330px;max-width:93vw;box-shadow:0 8px 32px rgba(0,0,0,.7);transition:transform .4s cubic-bezier(.34,1.56,.64,1);}
-#tnBox.show{transform:translateX(-50%) translateY(0);visibility:visible;}
+#tnBox{display:none;position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-200px);z-index:99999;background:#1C2A45;border:2px solid #C9A84C;border-radius:16px;padding:14px 16px;align-items:center;gap:12px;width:330px;max-width:93vw;box-shadow:0 8px 32px rgba(0,0,0,.7);transition:transform .4s cubic-bezier(.34,1.56,.64,1);}
+#tnBox.show{transform:translateX(-50%) translateY(0);display:flex;}
 #tnClose{background:#C9A84C;border:none;color:#0A0E1A;font-size:11px;font-weight:800;padding:6px 12px;border-radius:8px;cursor:pointer;flex-shrink:0;}
 #tnBar{position:absolute;bottom:0;left:0;height:4px;background:#C9A84C;border-radius:0 0 16px 16px;width:100%;}
 
 /* 비상 배너 */
-#emgBox{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-200px);visibility:hidden;z-index:999999;background:#2A0A0A;border:2.5px solid var(--off);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;width:340px;max-width:93vw;box-shadow:0 8px 40px rgba(201,80,76,.5);transition:transform .4s cubic-bezier(.34,1.56,.64,1);}
-#emgBox.show{transform:translateX(-50%) translateY(0);visibility:visible;}
+#emgBox{display:none;position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-200px);z-index:999999;background:#2A0A0A;border:2.5px solid var(--off);border-radius:16px;padding:16px;flex-direction:column;gap:10px;width:340px;max-width:93vw;box-shadow:0 8px 40px rgba(201,80,76,.5);transition:transform .4s cubic-bezier(.34,1.56,.64,1);}
+#emgBox.show{transform:translateX(-50%) translateY(0);display:flex;}
 .emg-t{display:flex;align-items:center;gap:10px;}
 .emg-i{font-size:28px;animation:emgblink .5s ease-in-out infinite alternate;}
 @keyframes emgblink{0%{opacity:1;}100%{opacity:.4;}}
@@ -534,7 +534,7 @@ button,input{font-family:inherit;}
 </div>
 
 <!-- 타이머 배너 -->
-<div id="tnBox">
+<div id="tnBox" style="display:none">
   <div style="font-size:26px;flex-shrink:0;" id="tnIcon">⏰</div>
   <div style="flex:1;">
     <div style="font-size:13px;font-weight:800;color:#C9A84C;margin-bottom:3px;" id="tnTitle">타이머 완료</div>
@@ -545,7 +545,7 @@ button,input{font-family:inherit;}
 </div>
 
 <!-- 비상 배너 -->
-<div id="emgBox">
+<div id="emgBox" style="display:none">
   <div class="emg-t">
     <div class="emg-i">🚨</div>
     <div><div class="emg-tit">⚡ 전력 이상 감지!</div><div class="emg-msg" id="emgMsg">전력 초과</div></div>
@@ -913,13 +913,14 @@ function tnShow(icon,title,msg){
   document.getElementById('tnTitle').textContent=title;
   document.getElementById('tnMsg').textContent=msg;
   if(bar){bar.style.transition='none';bar.style.width='100%';setTimeout(function(){bar.style.transition='width 30s linear';bar.style.width='0%';},50);}
+  box.style.display='flex';
   box.classList.remove('show');
   requestAnimationFrame(function(){requestAnimationFrame(function(){box.classList.add('show');});});
   clearTimeout(_tnAuto);_tnAuto=setTimeout(tnHide,30000);
   try{if(navigator.vibrate){var p=[];for(var i=0;i<60;i++)p.push(500,100);navigator.vibrate(p);}}catch(e){}
 }
 function tnHide(){
-  document.getElementById('tnBox').classList.remove('show');
+  var b=document.getElementById('tnBox');b.classList.remove('show');b.style.display='none';
   clearTimeout(_tnAuto);
   try{if(navigator.vibrate)navigator.vibrate(0);}catch(e){}
 }
@@ -930,13 +931,14 @@ function emgShow(watt,reason){
   var box=document.getElementById('emgBox');
   document.getElementById('emgMsg').textContent=reason||'전력 이상!';
   document.getElementById('emgW').textContent=Math.round(watt)+' W';
+  box.style.display='flex';
   box.classList.remove('show');
   requestAnimationFrame(function(){requestAnimationFrame(function(){box.classList.add('show');});});
   clearTimeout(_emgAuto);_emgAuto=setTimeout(emgHide,30000);
   try{if(navigator.vibrate){var p=[];for(var i=0;i<30;i++)p.push(800,200);navigator.vibrate(p);}}catch(e){}
 }
 function emgHide(){
-  document.getElementById('emgBox').classList.remove('show');
+  var b=document.getElementById('emgBox');b.classList.remove('show');b.style.display='none';
   clearTimeout(_emgAuto);
   try{if(navigator.vibrate)navigator.vibrate(0);}catch(e){}
 }
