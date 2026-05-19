@@ -245,6 +245,28 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 .pw-th-btn{background:var(--gold);border:none;border-radius:8px;color:#0A0E1A;font-size:12px;font-weight:800;padding:9px 16px;cursor:pointer;}
 .pw-refresh{width:100%;padding:11px;background:var(--surf);border:1.5px solid var(--bdr);border-radius:10px;color:var(--tx2);font-size:12px;font-weight:700;cursor:pointer;margin-bottom:8px;}
 
+/* ── 홈 하단 네비게이션 바 ── */
+.nav-bar{
+  display:flex;align-items:center;justify-content:space-around;
+  background:var(--surf);border-top:1px solid var(--bdr);
+  padding:8px 4px 10px;flex-shrink:0;
+  position:sticky;bottom:0;z-index:100;
+}
+.nav-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;padding:4px 10px;border-radius:10px;
+  transition:all .2s;flex:1;
+}
+.nav-item:active{opacity:.7;}
+.nav-item.active{background:var(--gd);}
+.nav-icon{font-size:20px;line-height:1;}
+.nav-label{font-size:9px;font-weight:700;color:var(--tx2);letter-spacing:.3px;}
+.nav-item.active .nav-label{color:var(--gold);}
+.nav-badge{position:absolute;top:-2px;right:-4px;background:var(--red);
+  color:white;font-size:8px;font-weight:800;border-radius:6px;
+  padding:1px 4px;min-width:14px;text-align:center;}
+.nav-icon-wrap{position:relative;display:inline-block;}
+
 /* ── 비상 알림 시스템 ── */
 #emgBox{
   position:fixed;top:14px;left:50%;
@@ -378,10 +400,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
       <div class="mbtn" onclick="openDrw()"><div class="mline"></div><div class="mline"></div><div class="mline"></div></div>
       <div><div class="htit">스마트홈 제어</div><div class="hsub">원 스위치 도어센서</div></div>
     </div>
-    <div class="gbtn" onclick="go('p-power')"><span style="font-size:13px">⚡</span><span class="gbtn-t">전력</span></div>
-    <div class="gbtn" onclick="go('p-timer')"><span style="font-size:13px">⏰</span><span class="gbtn-t">타이머</span></div>
-    <div class="gbtn" onclick="testEmergency()" style="border-color:rgba(201,80,76,.4)"><span style="font-size:13px">🚨</span><span class="gbtn-t" style="color:#C9504C">비상테스트</span></div>
-    <div class="gbtn" onclick="go('p-share')"><span style="font-size:13px">👥</span><span class="gbtn-t">공유 대상</span></div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <div id="powerBadgeHdr" style="background:var(--gd);border:1px solid var(--gold);border-radius:8px;padding:4px 8px;font-size:11px;font-weight:700;color:var(--gold);font-family:'DM Mono',monospace;">-- W</div>
+      <div style="background:var(--gd);border:1px solid rgba(201,80,76,.5);border-radius:8px;padding:4px 8px;font-size:11px;font-weight:700;color:#C9504C;cursor:pointer;" onclick="testEmergency()">🚨</div>
+    </div>
   </div>
   <div class="gbar"></div>
   <div class="cub" id="cubBar"></div>
@@ -1240,6 +1262,17 @@ function showTimerNotif(icon, title, msg) { tnShow(icon, title, msg); }
 function closeTimerNotif() { tnHide(); }
 function testNotif() { tnShow('⏰', '타이머 완료!', '[끄기] 전까지 진동이 울려요 — 30초 후 자동 종료'); }
 
+
+// ── 하단 네비게이션 ──
+function navGo(pageId, navId) {
+  // 페이지 전환
+  go(pageId);
+  // 네비 활성화
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navEl = document.getElementById(navId);
+  if (navEl) navEl.classList.add('active');
+}
+
 // ── 실시간 미리보기 ──
 function livePreview() {
   if (timerInterval) return;
@@ -1742,6 +1775,8 @@ function initPowerListener() {
       // 홈 화면 전력 배지 업데이트
       const badge = document.getElementById('powerBadge');
       if (badge) badge.textContent = Math.round(w) + 'W';
+      const hdrBadge = document.getElementById('powerBadgeHdr');
+      if (hdrBadge) hdrBadge.textContent = Math.round(w) + ' W';
     });
   } catch(e) {}
 }
