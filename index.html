@@ -206,12 +206,14 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 #tnBody{flex:1;}
 #tnTitle{font-size:13px;font-weight:800;color:#C9A84C;margin-bottom:3px;}
 #tnMsg{font-size:11px;color:#8A9BB8;line-height:1.5;}
-#tnClose{background:rgba(255,255,255,.1);border:1px solid #2A3354;
-  color:#8A9BB8;font-size:15px;font-weight:700;
-  width:30px;height:30px;border-radius:8px;
-  cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-#tnBar{position:absolute;bottom:0;left:0;height:3px;
-  background:#C9A84C;border-radius:0 0 16px 16px;width:100%;}
+#tnClose{background:#C9A84C;border:none;
+  color:#0A0E1A;font-size:11px;font-weight:800;
+  padding:6px 12px;border-radius:8px;
+  cursor:pointer;flex-shrink:0;white-space:nowrap;}
+#tnBar{position:absolute;bottom:0;left:0;height:4px;
+  background:#C9A84C;border-radius:0 0 16px 16px;width:100%;
+  animation:tnpulse 1s ease-in-out infinite alternate;}
+@keyframes tnpulse{0%{opacity:1;}100%{opacity:0.4;}}
 
 /* ── 타이머 페이지 ── */
 .timer-hero{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:20px 16px;margin-bottom:12px;text-align:center;}
@@ -1003,59 +1005,68 @@ let schedListArr   = [];
 let schedChecker   = null;
 
 // ── 타이머 완료 알림 배너 ──
-let _tnTimer = null;
-let _tnBarTimer = null;
+let _tnVibInterval = null;  // 반복 진동 인터벌
+let _tnAutoHide    = null;  // 자동 숨김 (사용 안 함 — 직접 꺼야 함)
 
+// 진동 반복 시작
+function _startVib() {
+  _stopVib();
+  try {
+    if (!navigator.vibrate) return;
+    navigator.vibrate([400, 300, 400, 300, 400]);
+    _tnVibInterval = setInterval(function() {
+      try { navigator.vibrate([400, 300, 400, 300, 400]); } catch(e) {}
+    }, 2000); // 2초마다 반복
+  } catch(e) {}
+}
+
+// 진동 중단
+function _stopVib() {
+  try { if (navigator.vibrate) navigator.vibrate(0); } catch(e) {}
+  if (_tnVibInterval) { clearInterval(_tnVibInterval); _tnVibInterval = null; }
+}
+
+// 배너 표시 + 진동 시작
 function tnShow(icon, title, msg) {
   const box = document.getElementById('tnBox');
   const bar = document.getElementById('tnBar');
-  if (!box) { console.log('tnBox 없음'); return; }
+  if (!box) return;
 
   // 내용 설정
   document.getElementById('tnIcon').textContent  = icon;
   document.getElementById('tnTitle').textContent = title;
   document.getElementById('tnMsg').textContent   = msg;
 
-  // 진행바 초기화
+  // 진행바 초기화 (끄기 전까지 꽉 찬 상태 유지)
   if (bar) {
     bar.style.transition = 'none';
     bar.style.width = '100%';
   }
 
-  // show 클래스 제거 → 추가 (transform 애니메이션)
+  // 배너 표시
   box.classList.remove('show');
-
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
       box.classList.add('show');
-      // 진행바 줄이기
-      if (bar) {
-        setTimeout(function() {
-          bar.style.transition = 'width 8s linear';
-          bar.style.width = '0%';
-        }, 100);
-      }
     });
   });
 
-  // 8초 후 자동 숨김
-  clearTimeout(_tnTimer);
-  _tnTimer = setTimeout(tnHide, 8000);
-
-  // 진동
-  try { if (navigator.vibrate) navigator.vibrate([200,100,200]); } catch(e) {}
+  // 진동 반복 시작
+  _startVib();
 }
 
+// 배너 닫기 + 진동 중단 (X 버튼 누를 때)
 function tnHide() {
   const box = document.getElementById('tnBox');
   if (box) box.classList.remove('show');
-  clearTimeout(_tnTimer);
+  _stopVib();
+  clearTimeout(_tnAutoHide);
 }
 
-// 기존 코드와 호환되도록 별칭 유지
+// 기존 코드 호환
 function showTimerNotif(icon, title, msg) { tnShow(icon, title, msg); }
 function closeTimerNotif() { tnHide(); }
-function testNotif() { tnShow('⏰', '알림 테스트!', '타이머 완료 시 이런 알림이 떠요 😊'); }
+function testNotif() { tnShow('⏰', '타이머 작동 중!', '이 배너를 직접 닫아야 진동이 멈춰요'); }
 
 // ── 실시간 미리보기 ──
 function livePreview() {
@@ -1363,7 +1374,7 @@ if('serviceWorker' in navigator){
     <div id="tnTitle">타이머 완료</div>
     <div id="tnMsg">설정한 시간이 됐어요</div>
   </div>
-  <button id="tnClose" onclick="tnHide()">✕</button>
+  <button id="tnClose" onclick="tnHide()">끄기</button>
   <div id="tnBar"></div>
 </div>
 
