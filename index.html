@@ -348,6 +348,24 @@ button,input{font-family:inherit;}
 #pwInput::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 #pwInput[type=number]{-moz-appearance:textfield;}
 #pwInput:focus{border-color:var(--gold)!important;}
+
+/* ── 위치 기반 제어 ── */
+.loc-map{background:var(--surf);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:10px;text-align:center;}
+.loc-map-icon{font-size:48px;margin-bottom:8px;}
+.loc-status{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.loc-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;background:var(--tx3);}
+.loc-dot.home{background:var(--on);animation:pulse 1.5s infinite;}
+.loc-dot.away{background:var(--off);}
+.loc-dot.searching{background:var(--gold);animation:pulse 1.5s infinite;}
+.loc-info{font-size:12px;color:var(--tx2);}
+.loc-info strong{color:var(--tx);display:block;font-size:13px;margin-bottom:2px;}
+.loc-set-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--blue),#2E5BAA);border:none;border-radius:12px;color:white;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:8px;}
+.loc-toggle-btn{width:100%;padding:12px;background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;color:var(--tx2);font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px;}
+.loc-toggle-btn.active{background:rgba(76,175,130,.15);border-color:var(--on);color:var(--on);}
+.loc-range-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.loc-range-inp{flex:1;background:var(--surf);border:1.5px solid var(--bdr);border-radius:8px;color:var(--tx);font-size:16px;font-weight:700;font-family:'DM Mono',monospace;text-align:center;padding:8px;}
+.loc-range-inp:focus{outline:none;border-color:var(--gold);}
+.loc-log{background:var(--surf);border-radius:10px;padding:10px;font-size:11px;color:var(--tx2);margin-top:8px;max-height:120px;overflow-y:auto;}
 </style>
 </head>
 <body>
@@ -590,6 +608,57 @@ button,input{font-family:inherit;}
     </div>
   </div>
 
+  <!-- 위치 기반 제어 -->
+  <div class="page" id="pg-location">
+    <div class="hdr"><div class="hl"><div class="bbtn" onclick="showPg('pg-home')">←</div><div><div class="htit">위치 기반 제어</div><div class="hsub">GPS 자동 외출/귀가</div></div></div></div>
+    <div class="gbar"></div>
+    <div class="pcon">
+
+      <!-- 현재 상태 -->
+      <div class="loc-status" id="locStatus">
+        <div class="loc-dot searching" id="locDot"></div>
+        <div class="loc-info"><strong id="locStatusTitle">위치 확인 중...</strong><span id="locStatusSub">GPS를 가져오는 중이에요</span></div>
+      </div>
+
+      <!-- 집 위치 설정 -->
+      <div class="stit">🏠 집 위치 설정</div>
+      <div style="background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:10px;">
+        <div style="font-size:12px;color:var(--tx2);margin-bottom:10px;">현재 위치를 집으로 등록하면 GPS로 자동 제어돼요</div>
+        <div id="homeLocInfo" style="font-size:12px;color:var(--tx2);margin-bottom:10px;text-align:center;">
+          📍 등록된 집 위치 없음
+        </div>
+        <button class="loc-set-btn" onclick="setHomeLocation()">📍 현재 위치를 집으로 등록</button>
+      </div>
+
+      <!-- 자동 제어 범위 -->
+      <div class="stit">⚙️ 자동 제어 범위</div>
+      <div style="background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:10px;">
+        <div style="font-size:12px;color:var(--tx2);margin-bottom:8px;">귀가 감지 거리 (집 근처 몇 m 이내)</div>
+        <div class="loc-range-row">
+          <input class="loc-range-inp" type="number" id="arriveRange" value="300" min="100" max="2000">
+          <span style="color:var(--tx2);font-size:13px;">m 이내 → 💡 귀가 모드</span>
+        </div>
+        <div style="font-size:12px;color:var(--tx2);margin-bottom:8px;margin-top:4px;">외출 감지 거리 (집에서 몇 m 이상)</div>
+        <div class="loc-range-row">
+          <input class="loc-range-inp" type="number" id="leaveRange" value="800" min="200" max="5000">
+          <span style="color:var(--tx2);font-size:13px;">m 이상 → 🚶 외출 모드</span>
+        </div>
+        <button style="width:100%;padding:10px;background:var(--gold);border:none;border-radius:10px;color:#0A0E1A;font-size:13px;font-weight:800;cursor:pointer;" onclick="saveLocRange()">저장</button>
+      </div>
+
+      <!-- 자동 제어 ON/OFF -->
+      <div class="stit">🔄 자동 제어</div>
+      <button class="loc-toggle-btn" id="locToggleBtn" onclick="toggleLocAuto()">
+        🔴 자동 제어 꺼짐 — 클릭해서 켜기
+      </button>
+
+      <!-- 활동 로그 -->
+      <div class="stit">📋 위치 감지 로그</div>
+      <div class="loc-log" id="locLog">로그 없음</div>
+
+    </div>
+  </div>
+
   <!-- 외출/귀가 모드 -->
   <div class="page" id="pg-mode">
     <div class="hdr"><div class="hl"><div class="bbtn" onclick="showPg('pg-home')">←</div><div><div class="htit">외출/귀가 모드</div><div class="hsub">자동 켜짐/꺼짐 설정</div></div></div></div>
@@ -718,6 +787,7 @@ button,input{font-family:inherit;}
   <div class="ditm" onclick="showPg('pg-ai');closeDrw()"><span class="dic">🤖</span>AI 패턴 분석</div>
   <div class="ditm" onclick="showPg('pg-stat');closeDrw()"><span class="dic">📊</span>멤버별 통계</div>
   <div class="ditm" onclick="showPg('pg-guest');closeDrw()"><span class="dic">🔑</span>게스트 접근</div>
+  <div class="ditm" onclick="showPg('pg-location');closeDrw()"><span class="dic">📍</span>위치 기반 제어</div>
   <div class="ditm" onclick="showPg('pg-mode');closeDrw()"><span class="dic">🚶</span>외출/귀가 모드</div>
   <div class="ditm" onclick="showPg('pg-hist');closeDrw()"><span class="dic">📋</span>사용 기록</div>
   <div class="ditm" onclick="showPg('pg-notif');closeDrw()"><span class="dic">🔔</span>알림 설정</div>
@@ -846,6 +916,7 @@ function showPg(id) {
   if (id==='pg-stat') renderStat();
   if (id==='pg-guest') renderGuest();
   if (id==='pg-mode') renderMode();
+  if (id==='pg-location') initLocPage();
   if (id==='pg-share') renderShare();
   if (id==='pg-power') loadPower();
   if (id==='pg-timer') renderSched();
@@ -901,7 +972,7 @@ function initFB() {
     if (b) b.textContent = Math.round(w)+' W';
     if (document.getElementById('pg-power').classList.contains('show')) updatePwHero(w);
   });
-  setTimeout(function(){ restoreTimer(); startSchedCheck(); startModeCheck(); }, 1500);
+  setTimeout(function(){ restoreTimer(); startSchedCheck(); startModeCheck(); initLocAuto(); }, 1500);
 }
 
 // ── 방 제어 ──
@@ -1303,6 +1374,226 @@ async function runAI(){
   finally{btn.disabled=false;load.style.display='none';}
 }
 
+
+
+// ══════════════════════════════════════
+// 위치 기반 자동 제어
+// ══════════════════════════════════════
+var _locWatchId = null;
+var _locAutoOn = false;
+var _homePos = null;        // {lat, lng}
+var _locState = 'unknown';  // 'home' | 'away' | 'unknown'
+var _locLogs = [];
+var _locFired = {arrive:false, leave:false};
+var _arriveRange = 300;
+var _leaveRange = 800;
+
+// ── 페이지 초기화 ──
+function initLocPage() {
+  // Firebase 에서 저장된 집 위치 로드
+  db.ref('/location').once('value', function(s) {
+    var d = s.val() || {};
+    if (d.homeLat && d.homeLng) {
+      _homePos = {lat: d.homeLat, lng: d.homeLng};
+      document.getElementById('homeLocInfo').textContent =
+        '📍 집 위치 등록됨 (' + d.homeLat.toFixed(4) + ', ' + d.homeLng.toFixed(4) + ')';
+    }
+    if (d.arriveRange) { _arriveRange = d.arriveRange; document.getElementById('arriveRange').value = d.arriveRange; }
+    if (d.leaveRange)  { _leaveRange  = d.leaveRange;  document.getElementById('leaveRange').value  = d.leaveRange; }
+    if (d.autoOn) {
+      _locAutoOn = d.autoOn;
+      updateLocToggleBtn();
+      if (_locAutoOn) startLocWatch();
+    }
+  });
+  renderLocLog();
+  // 현재 위치 한번 가져오기
+  getCurrentPos(function(pos) {
+    if (_homePos) updateLocStatus(pos.lat, pos.lng);
+  });
+}
+
+// ── 현재 위치 가져오기 ──
+function getCurrentPos(cb) {
+  if (!navigator.geolocation) {
+    toast('이 브라우저는 GPS를 지원하지 않아요'); return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    function(pos) { cb({lat: pos.coords.latitude, lng: pos.coords.longitude}); },
+    function(err) {
+      var errMsg = err.code === 1 ? '위치 권한을 허용해주세요' : 'GPS 신호를 찾을 수 없어요';
+      document.getElementById('locStatusTitle').textContent = '위치 오류';
+      document.getElementById('locStatusSub').textContent = errMsg;
+      document.getElementById('locDot').className = 'loc-dot away';
+      toast('📍 ' + errMsg);
+    },
+    {enableHighAccuracy: true, timeout: 10000, maximumAge: 0}
+  );
+}
+
+// ── 집 위치 등록 ──
+function setHomeLocation() {
+  toast('📍 현재 위치 확인 중...');
+  getCurrentPos(function(pos) {
+    _homePos = pos;
+    db.ref('/location').update({homeLat: pos.lat, homeLng: pos.lng});
+    document.getElementById('homeLocInfo').textContent =
+      '📍 집 위치 등록됨 (' + pos.lat.toFixed(4) + ', ' + pos.lng.toFixed(4) + ')';
+    toast('✅ 집 위치가 등록됐어요!');
+    addLocLog('🏠 집 위치 등록: ' + pos.lat.toFixed(4) + ', ' + pos.lng.toFixed(4));
+  });
+}
+
+// ── 거리 계산 (Haversine 공식) ──
+function calcDist(lat1, lng1, lat2, lng2) {
+  var R = 6371000; // 지구 반지름 (m)
+  var dLat = (lat2 - lat1) * Math.PI / 180;
+  var dLng = (lng2 - lng1) * Math.PI / 180;
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+          Math.sin(dLng/2) * Math.sin(dLng/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+// ── 위치 상태 업데이트 ──
+function updateLocStatus(lat, lng) {
+  if (!_homePos) return;
+  var dist = Math.round(calcDist(lat, lng, _homePos.lat, _homePos.lng));
+  var dot   = document.getElementById('locDot');
+  var title = document.getElementById('locStatusTitle');
+  var sub   = document.getElementById('locStatusSub');
+
+  if (dist <= _arriveRange) {
+    // 집 근처
+    if (dot)   dot.className   = 'loc-dot home';
+    if (title) title.textContent = '🏠 집 근처 — ' + dist + 'm';
+    if (sub)   sub.textContent  = '귀가 감지 범위 안에 있어요';
+
+    if (_locAutoOn && _locState !== 'home') {
+      _locState = 'home';
+      _locFired.leave = false;
+      if (!_locFired.arrive) {
+        _locFired.arrive = true;
+        runMode('home');
+        addLocLog('🏠 귀가 감지 (' + dist + 'm) → 귀가 모드 실행');
+        toast('🏠 집 근처 도착! 귀가 모드 실행됐어요');
+      }
+    }
+  } else if (dist >= _leaveRange) {
+    // 집에서 멀어짐
+    if (dot)   dot.className   = 'loc-dot away';
+    if (title) title.textContent = '🚶 외출 중 — ' + dist + 'm';
+    if (sub)   sub.textContent  = '외출 감지 범위 밖에 있어요';
+
+    if (_locAutoOn && _locState !== 'away') {
+      _locState = 'away';
+      _locFired.arrive = false;
+      if (!_locFired.leave) {
+        _locFired.leave = true;
+        runMode('away');
+        addLocLog('🚶 외출 감지 (' + dist + 'm) → 외출 모드 실행');
+        toast('🚶 집에서 멀어졌어요! 외출 모드 실행됐어요');
+      }
+    }
+  } else {
+    // 중간 구간
+    if (dot)   dot.className   = 'loc-dot searching';
+    if (title) title.textContent = '📍 이동 중 — ' + dist + 'm';
+    if (sub)   sub.textContent  = '귀가: ' + _arriveRange + 'm 이내 | 외출: ' + _leaveRange + 'm 이상';
+  }
+}
+
+// ── GPS 실시간 감시 시작 ──
+function startLocWatch() {
+  if (_locWatchId !== null) return;
+  if (!navigator.geolocation) { toast('GPS를 지원하지 않는 기기예요'); return; }
+  _locWatchId = navigator.geolocation.watchPosition(
+    function(pos) {
+      updateLocStatus(pos.coords.latitude, pos.coords.longitude);
+    },
+    function(err) { console.log('GPS 오류:', err.message); },
+    {enableHighAccuracy: true, timeout: 15000, maximumAge: 30000}
+  );
+  addLocLog('🔍 GPS 감시 시작');
+}
+
+// ── GPS 감시 중지 ──
+function stopLocWatch() {
+  if (_locWatchId !== null) {
+    navigator.geolocation.clearWatch(_locWatchId);
+    _locWatchId = null;
+  }
+  _locState = 'unknown';
+  addLocLog('⏹ GPS 감시 중지');
+}
+
+// ── 자동 제어 토글 ──
+function toggleLocAuto() {
+  if (!_homePos) { toast('먼저 집 위치를 등록해주세요 📍'); return; }
+  _locAutoOn = !_locAutoOn;
+  db.ref('/location').update({autoOn: _locAutoOn});
+  updateLocToggleBtn();
+  if (_locAutoOn) {
+    startLocWatch();
+    toast('✅ 위치 기반 자동 제어 켜짐!');
+  } else {
+    stopLocWatch();
+    toast('⏹ 위치 기반 자동 제어 꺼짐');
+    var dot = document.getElementById('locDot');
+    if (dot) dot.className = 'loc-dot';
+    var t = document.getElementById('locStatusTitle');
+    var sb = document.getElementById('locStatusSub');
+    if (t) t.textContent = '자동 제어 꺼짐';
+    if (sb) sb.textContent = '위에서 켜기 버튼을 눌러주세요';
+  }
+}
+
+function updateLocToggleBtn() {
+  var btn = document.getElementById('locToggleBtn');
+  if (!btn) return;
+  if (_locAutoOn) {
+    btn.textContent = '🟢 자동 제어 켜짐 — 클릭해서 끄기';
+    btn.className = 'loc-toggle-btn active';
+  } else {
+    btn.textContent = '🔴 자동 제어 꺼짐 — 클릭해서 켜기';
+    btn.className = 'loc-toggle-btn';
+  }
+}
+
+// ── 범위 저장 ──
+function saveLocRange() {
+  var ar = parseInt(document.getElementById('arriveRange').value) || 300;
+  var lr = parseInt(document.getElementById('leaveRange').value)  || 800;
+  if (ar >= lr) { toast('귀가 거리는 외출 거리보다 작아야 해요'); return; }
+  _arriveRange = ar; _leaveRange = lr;
+  db.ref('/location').update({arriveRange: ar, leaveRange: lr});
+  toast('범위 저장됐어요 ✅');
+}
+
+// ── 로그 ──
+function addLocLog(msg) {
+  var d = new Date();
+  var time = pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+  _locLogs.unshift('['+time+'] '+msg);
+  if (_locLogs.length > 20) _locLogs.pop();
+  renderLocLog();
+}
+function renderLocLog() {
+  var el = document.getElementById('locLog');
+  if (!el) return;
+  el.textContent = _locLogs.length ? _locLogs.join(' | ') : '로그 없음';
+}
+
+// initFB 시작 시 위치 자동 제어 복원
+function initLocAuto() {
+  db.ref('/location').once('value', function(s) {
+    var d = s.val() || {};
+    if (d.homeLat) _homePos = {lat: d.homeLat, lng: d.homeLng};
+    if (d.arriveRange) _arriveRange = d.arriveRange;
+    if (d.leaveRange)  _leaveRange  = d.leaveRange;
+    if (d.autoOn) { _locAutoOn = true; startLocWatch(); }
+  });
+}
 
 // ══════════════════════════════════════
 // 멤버별 사용 통계
