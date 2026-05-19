@@ -215,6 +215,41 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
   animation:tnpulse 1s ease-in-out infinite alternate;}
 @keyframes tnpulse{0%{opacity:1;}100%{opacity:0.4;}}
 
+/* ── AI 사용 패턴 분석 ── */
+.ai-hero{background:linear-gradient(135deg,#0F1A35,#1C2A50);border:1.5px solid #4E7FD4;border-radius:16px;padding:18px;margin-bottom:12px;text-align:center;}
+.ai-hero-icon{font-size:40px;margin-bottom:8px;}
+.ai-hero-title{font-size:16px;font-weight:800;color:#4E7FD4;margin-bottom:4px;}
+.ai-hero-sub{font-size:11px;color:var(--tx2);line-height:1.6;}
+.ai-btn{width:100%;padding:14px;background:linear-gradient(135deg,#4E7FD4,#2E5BAA);border:none;border-radius:14px;color:white;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:12px;letter-spacing:.3px;}
+.ai-btn:active{opacity:.8;}
+.ai-btn:disabled{opacity:.5;cursor:not-allowed;}
+.ai-loading{text-align:center;padding:24px;color:var(--tx2);font-size:13px;}
+.ai-dots span{display:inline-block;animation:aidot 1.2s infinite;font-size:20px;}
+.ai-dots span:nth-child(2){animation-delay:.2s;}
+.ai-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes aidot{0%,80%,100%{opacity:.2;}40%{opacity:1;}}
+.ai-result{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:16px;margin-bottom:10px;}
+.ai-result-hdr{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--bdr);}
+.ai-result-icon{font-size:20px;}
+.ai-result-title{font-size:13px;font-weight:800;color:var(--blue);}
+.ai-result-time{font-size:10px;color:var(--tx2);margin-left:auto;font-family:'DM Mono',monospace;}
+.ai-card{background:var(--surf);border-radius:12px;padding:14px;margin-bottom:8px;border-left:3px solid var(--blue);}
+.ai-card.gold{border-left-color:var(--gold);}
+.ai-card.green{border-left-color:var(--on);}
+.ai-card.red{border-left-color:#C9504C;}
+.ai-card-label{font-size:10px;font-weight:700;color:var(--tx2);letter-spacing:.5px;margin-bottom:6px;}
+.ai-card-content{font-size:13px;color:var(--tx);line-height:1.7;}
+.ai-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.ai-stat{background:var(--surf);border-radius:10px;padding:10px;text-align:center;border:1px solid var(--bdr);}
+.ai-stat-val{font-size:20px;font-weight:800;color:var(--gold);font-family:'DM Mono',monospace;}
+.ai-stat-lbl{font-size:9px;color:var(--tx2);margin-top:2px;}
+.ai-history{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:10px;}
+.ai-hist-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr);}
+.ai-hist-item:last-child{border-bottom:none;}
+.ai-hist-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--blue);}
+.ai-hist-time{font-size:10px;color:var(--tx2);font-family:'DM Mono',monospace;min-width:50px;}
+.ai-hist-txt{font-size:12px;color:var(--tx);}
+
 /* ── 전력 대시보드 ── */
 .pw-hero{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:18px;margin-bottom:10px;}
 .pw-now{display:flex;align-items:flex-end;justify-content:center;gap:6px;margin-bottom:6px;}
@@ -527,6 +562,97 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 </div>
 
 <!-- 공유 대상 -->
+<div class="page" id="p-ai">
+  <div class="hdr">
+    <div class="hl">
+      <div class="bbtn" onclick="go('p-home')">←</div>
+      <div><div class="htit">AI 패턴 분석</div><div class="hsub">Claude AI 스마트홈 인사이트</div></div>
+    </div>
+  </div>
+  <div class="gbar"></div>
+  <div class="pcon">
+
+    <!-- 히어로 -->
+    <div class="ai-hero">
+      <div class="ai-hero-icon">🤖</div>
+      <div class="ai-hero-title">Claude AI 사용 패턴 분석</div>
+      <div class="ai-hero-sub">Firebase 사용 기록을 AI가 분석해서<br>스마트홈 사용 패턴과 추천을 제공해요</div>
+    </div>
+
+    <!-- 분석 버튼 -->
+    <button class="ai-btn" id="aiAnalyzeBtn" onclick="runAIAnalysis()">
+      🔍 AI 분석 시작
+    </button>
+
+    <!-- 로딩 -->
+    <div class="ai-loading" id="aiLoading" style="display:none;">
+      <div class="ai-dots"><span>●</span><span>●</span><span>●</span></div>
+      <div style="margin-top:10px;" id="aiLoadingTxt">Firebase 데이터 수집 중...</div>
+    </div>
+
+    <!-- 통계 요약 -->
+    <div id="aiStats" style="display:none;">
+      <div class="stit">📊 사용 통계 요약</div>
+      <div class="ai-stats">
+        <div class="ai-stat">
+          <div class="ai-stat-val" id="aiTotalLogs">0</div>
+          <div class="ai-stat-lbl">총 제어 횟수</div>
+        </div>
+        <div class="ai-stat">
+          <div class="ai-stat-val" id="aiMostRoom">-</div>
+          <div class="ai-stat-lbl">가장 많이 켠 방</div>
+        </div>
+        <div class="ai-stat">
+          <div class="ai-stat-val" id="aiPeakHour">-시</div>
+          <div class="ai-stat-lbl">가장 많이 사용한 시간대</div>
+        </div>
+        <div class="ai-stat">
+          <div class="ai-stat-val" id="aiMostUser">-</div>
+          <div class="ai-stat-lbl">가장 많이 사용한 멤버</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI 분석 결과 -->
+    <div id="aiResult" style="display:none;">
+      <div class="stit">🤖 AI 분석 결과</div>
+      <div class="ai-result">
+        <div class="ai-result-hdr">
+          <div class="ai-result-icon">✨</div>
+          <div class="ai-result-title">Claude AI 인사이트</div>
+          <div class="ai-result-time" id="aiResultTime">-</div>
+        </div>
+
+        <div class="ai-card gold">
+          <div class="ai-card-label">📈 사용 패턴</div>
+          <div class="ai-card-content" id="aiPattern">분석 중...</div>
+        </div>
+        <div class="ai-card green">
+          <div class="ai-card-label">💡 추천 사항</div>
+          <div class="ai-card-content" id="aiRecommend">분석 중...</div>
+        </div>
+        <div class="ai-card">
+          <div class="ai-card-label">🔮 예측</div>
+          <div class="ai-card-content" id="aiPredict">분석 중...</div>
+        </div>
+        <div class="ai-card red">
+          <div class="ai-card-label">⚠️ 주의사항</div>
+          <div class="ai-card-content" id="aiWarning">분석 중...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 최근 사용 기록 -->
+    <div id="aiHistSection" style="display:none;">
+      <div class="stit">🕐 분석에 사용된 기록</div>
+      <div class="ai-history">
+        <div id="aiHistList"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <div class="page" id="p-power">
   <div class="hdr">
     <div class="hl">
@@ -757,6 +883,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 <div class="drw" id="drw">
   <div class="dhdr"><div class="dtit">원 스위치 도어센서</div><div class="dsub" id="drwSub">IT융합통신학과 졸업작품</div></div>
   <div class="ditm act"  onclick="go('p-home');  closeDrw()"><span class="dic">🏠</span>홈 대시보드</div>
+  <div class="ditm"      onclick="go('p-ai');    closeDrw()"><span class="dic">🤖</span>AI 패턴 분석</div>
   <div class="ditm"      onclick="go('p-power'); closeDrw()"><span class="dic">⚡</span>전력 대시보드</div>
   <div class="ditm"      onclick="go('p-timer'); closeDrw()"><span class="dic">⏰</span>타이머 &amp; 예약</div>
   <div class="ditm"      onclick="go('p-hist');  closeDrw()"><span class="dic">📊</span>사용 기록</div>
@@ -1167,7 +1294,7 @@ function sendReq(){
   toast('관리자(김민종)에게 요청을 보냈어요 📩');
 }
 
-function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));document.getElementById(id).classList.add('show');if(id==='p-hist')renderLogs();if(id==='p-notif')renderNotifs();if(id==='p-share')renderShare();if(id==='p-timer')renderSched();if(id==='p-power')loadPowerData();}
+function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));document.getElementById(id).classList.add('show');if(id==='p-hist')renderLogs();if(id==='p-notif')renderNotifs();if(id==='p-share')renderShare();if(id==='p-timer')renderSched();if(id==='p-power')loadPowerData();if(id==='p-ai')initAIPage();}
 function openDrw(){document.getElementById('drw').classList.add('open');document.getElementById('dovl').classList.add('open');}
 function closeDrw(){document.getElementById('drw').classList.remove('open');document.getElementById('dovl').classList.remove('open');}
 function nowStr(){const d=new Date();return'오늘 '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
@@ -1561,6 +1688,216 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+
+
+// ══════════════════════════════════════
+// AI 사용 패턴 분석
+// ══════════════════════════════════════
+let aiLogs = [];
+
+function initAIPage() {
+  // 페이지 열릴 때 로그 미리 로드
+  loadAILogs();
+}
+
+// Firebase 로그 로드
+function loadAILogs() {
+  try {
+    db.ref('/logs').limitToLast(50).once('value', snap => {
+      aiLogs = [];
+      snap.forEach(c => aiLogs.unshift({ id: c.key, ...c.val() }));
+    });
+  } catch(e) {}
+}
+
+// AI 분석 실행
+async function runAIAnalysis() {
+  const btn = document.getElementById('aiAnalyzeBtn');
+  const loading = document.getElementById('aiLoading');
+  const loadTxt = document.getElementById('aiLoadingTxt');
+
+  btn.disabled = true;
+  loading.style.display = 'block';
+  document.getElementById('aiStats').style.display = 'none';
+  document.getElementById('aiResult').style.display = 'none';
+  document.getElementById('aiHistSection').style.display = 'none';
+
+  try {
+    // 1단계: Firebase 로그 수집
+    loadTxt.textContent = 'Firebase 사용 기록 수집 중...';
+    await new Promise(r => setTimeout(r, 500));
+
+    const logs = await new Promise((res, rej) => {
+      try {
+        db.ref('/logs').limitToLast(50).once('value', snap => {
+          const arr = [];
+          snap.forEach(c => arr.unshift({ ...c.val() }));
+          res(arr);
+        });
+      } catch(e) { res([]); }
+    });
+
+    if (logs.length === 0) {
+      toast('사용 기록이 없어요. 먼저 앱을 사용해보세요!');
+      btn.disabled = false;
+      loading.style.display = 'none';
+      return;
+    }
+
+    // 2단계: 통계 계산
+    loadTxt.textContent = '사용 패턴 계산 중...';
+    await new Promise(r => setTimeout(r, 400));
+    const stats = calcStats(logs);
+    renderStats(stats);
+    renderAIHistory(logs.slice(0, 10));
+
+    // 3단계: Claude API 호출
+    loadTxt.textContent = 'Claude AI 분석 중...';
+    await new Promise(r => setTimeout(r, 300));
+
+    const prompt = buildPrompt(logs, stats);
+    const aiRes  = await callClaudeAPI(prompt);
+    renderAIResult(aiRes);
+
+  } catch(e) {
+    console.log('AI 분석 오류:', e);
+    toast('분석 중 오류가 발생했어요');
+  } finally {
+    btn.disabled = false;
+    loading.style.display = 'none';
+  }
+}
+
+// 통계 계산
+function calcStats(logs) {
+  const roomCount = {};
+  const hourCount = {};
+  const userCount = {};
+  let onCount = 0, offCount = 0;
+
+  logs.forEach(l => {
+    if (l.room) roomCount[l.room] = (roomCount[l.room] || 0) + 1;
+    if (l.act === '켬') onCount++;
+    if (l.act === '끔') offCount++;
+    if (l.user) userCount[l.user] = (userCount[l.user] || 0) + 1;
+
+    // 시간대 추출
+    if (l.time) {
+      const h = parseInt(l.time.split(':')[0]);
+      if (!isNaN(h)) hourCount[h] = (hourCount[h] || 0) + 1;
+    } else if (l.ts) {
+      const h = new Date(l.ts).getHours();
+      hourCount[h] = (hourCount[h] || 0) + 1;
+    }
+  });
+
+  const mostRoom = Object.entries(roomCount).sort((a,b)=>b[1]-a[1])[0]?.[0] || '-';
+  const peakHour = Object.entries(hourCount).sort((a,b)=>b[1]-a[1])[0]?.[0] || '-';
+  const mostUser = Object.entries(userCount).sort((a,b)=>b[1]-a[1])[0]?.[0] || '-';
+
+  return { total: logs.length, roomCount, hourCount, userCount,
+           mostRoom, peakHour, mostUser, onCount, offCount };
+}
+
+// 통계 화면 렌더링
+function renderStats(s) {
+  document.getElementById('aiTotalLogs').textContent = s.total;
+  document.getElementById('aiMostRoom').textContent  = s.mostRoom;
+  document.getElementById('aiPeakHour').textContent  = s.peakHour + '시';
+  document.getElementById('aiMostUser').textContent  = s.mostUser;
+  document.getElementById('aiStats').style.display   = 'block';
+}
+
+// 최근 기록 렌더링
+function renderAIHistory(logs) {
+  const el = document.getElementById('aiHistList');
+  if (!el) return;
+  el.innerHTML = logs.map(l => `
+    <div class="ai-hist-item">
+      <div class="ai-hist-dot" style="background:${l.act==='켬'?'#4CAF82':'#C9A84C'}"></div>
+      <div class="ai-hist-time">${l.time || '-'}</div>
+      <div class="ai-hist-txt">${l.user || '?'} — ${l.room || '전체'} ${l.act || ''}</div>
+    </div>
+  `).join('');
+  document.getElementById('aiHistSection').style.display = 'block';
+}
+
+// Claude API 프롬프트 생성
+function buildPrompt(logs, stats) {
+  const roomSummary = Object.entries(stats.roomCount)
+    .map(([r,c]) => r + ' ' + c + '회').join(', ');
+  const hourSummary = Object.entries(stats.hourCount)
+    .sort((a,b)=>b[1]-a[1]).slice(0,5)
+    .map(([h,c]) => h + '시 ' + c + '회').join(', ');
+  const userSummary = Object.entries(stats.userCount)
+    .map(([u,c]) => u + ' ' + c + '회').join(', ');
+  const recentLogs = logs.slice(0,10).map(l =>
+    (l.time||'-') + ' ' + (l.user||'?') + '가 ' + (l.room||'전체') + ' ' + (l.act||'')
+  ).join('
+');
+
+  return `당신은 스마트홈 사용 패턴을 분석하는 AI 어시스턴트입니다.
+아래는 한국 가정의 스마트홈 앱 사용 기록입니다.
+
+[사용 통계]
+- 총 제어 횟수: ${stats.total}회
+- 켜기: ${stats.onCount}회 / 끄기: ${stats.offCount}회
+- 방별 사용: ${roomSummary}
+- 시간대별 사용 (상위 5개): ${hourSummary}
+- 사용자별 사용: ${userSummary}
+- 가장 많이 사용한 방: ${stats.mostRoom}
+- 가장 많이 사용한 시간대: ${stats.peakHour}시
+
+[최근 10개 기록]
+${recentLogs}
+
+위 데이터를 분석하여 반드시 아래 JSON 형식으로만 응답하세요. 한국어로 작성하고 각 항목을 2~3문장으로 구체적으로 작성하세요:
+
+{
+  "pattern": "사용 패턴 분석 내용",
+  "recommend": "추천 사항 내용",
+  "predict": "향후 예측 내용",
+  "warning": "주의사항 내용"
+}`;
+}
+
+// Claude API 호출
+async function callClaudeAPI(prompt) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await res.json();
+  const text = data.content?.[0]?.text || '{}';
+  // JSON 파싱
+  const clean = text.replace(/```json|```/g, '').trim();
+  const start = clean.indexOf('{');
+  const end   = clean.lastIndexOf('}');
+  if (start >= 0 && end >= 0) {
+    return JSON.parse(clean.slice(start, end + 1));
+  }
+  return { pattern: text, recommend: '-', predict: '-', warning: '-' };
+}
+
+// AI 결과 렌더링
+function renderAIResult(res) {
+  document.getElementById('aiPattern').textContent   = res.pattern   || '-';
+  document.getElementById('aiRecommend').textContent = res.recommend || '-';
+  document.getElementById('aiPredict').textContent   = res.predict   || '-';
+  document.getElementById('aiWarning').textContent   = res.warning   || '-';
+
+  const now = new Date();
+  document.getElementById('aiResultTime').textContent =
+    now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0') + ' 분석 완료';
+
+  document.getElementById('aiResult').style.display = 'block';
+  toast('🤖 AI 분석 완료!');
+}
 
 // ══════════════════════════════════════
 // 전력 대시보드
