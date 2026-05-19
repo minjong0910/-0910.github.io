@@ -181,8 +181,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 
 /* ── 타이머 완료 알림 배너 ── */
 #tnBox{
-  position:fixed;left:50%;transform:translateX(-50%);
-  top:-140px;
+  position:fixed;
+  top:14px;
+  left:50%;
+  transform:translateX(-50%) translateY(-160px);
   z-index:99999;
   background:#1C2A45;
   border:2px solid #C9A84C;
@@ -191,9 +193,15 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
   display:flex;align-items:center;gap:12px;
   width:330px;max-width:92vw;
   box-shadow:0 8px 32px rgba(0,0,0,.7);
-  transition:top 0.4s ease;
+  transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s ease;
+  opacity:0;
+  pointer-events:none;
 }
-#tnBox.show{top:14px;}
+#tnBox.show{
+  transform:translateX(-50%) translateY(0px);
+  opacity:1;
+  pointer-events:auto;
+}
 #tnIcon{font-size:26px;flex-shrink:0;}
 #tnBody{flex:1;}
 #tnTitle{font-size:13px;font-weight:800;color:#C9A84C;margin-bottom:3px;}
@@ -999,16 +1007,14 @@ let _tnTimer = null;
 let _tnBarTimer = null;
 
 function tnShow(icon, title, msg) {
-  const box   = document.getElementById('tnBox');
-  const bar   = document.getElementById('tnBar');
-  const iEl   = document.getElementById('tnIcon');
-  const tEl   = document.getElementById('tnTitle');
-  const mEl   = document.getElementById('tnMsg');
-  if (!box) return;
+  const box = document.getElementById('tnBox');
+  const bar = document.getElementById('tnBar');
+  if (!box) { console.log('tnBox 없음'); return; }
 
-  iEl.textContent = icon;
-  tEl.textContent = title;
-  mEl.textContent = msg;
+  // 내용 설정
+  document.getElementById('tnIcon').textContent  = icon;
+  document.getElementById('tnTitle').textContent = title;
+  document.getElementById('tnMsg').textContent   = msg;
 
   // 진행바 초기화
   if (bar) {
@@ -1016,26 +1022,27 @@ function tnShow(icon, title, msg) {
     bar.style.width = '100%';
   }
 
-  // 위로 숨기고 → 다음 프레임에 내려오기
-  box.style.top = '-140px';
+  // show 클래스 제거 → 추가 (transform 애니메이션)
   box.classList.remove('show');
 
-  setTimeout(() => {
-    box.classList.add('show');
-    // 진행바 줄어들기 시작
-    if (bar) {
-      setTimeout(() => {
-        bar.style.transition = 'width 8s linear';
-        bar.style.width = '0%';
-      }, 50);
-    }
-  }, 30);
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      box.classList.add('show');
+      // 진행바 줄이기
+      if (bar) {
+        setTimeout(function() {
+          bar.style.transition = 'width 8s linear';
+          bar.style.width = '0%';
+        }, 100);
+      }
+    });
+  });
 
   // 8초 후 자동 숨김
   clearTimeout(_tnTimer);
   _tnTimer = setTimeout(tnHide, 8000);
 
-  // 진동 (모바일)
+  // 진동
   try { if (navigator.vibrate) navigator.vibrate([200,100,200]); } catch(e) {}
 }
 
