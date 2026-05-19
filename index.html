@@ -907,6 +907,8 @@ firebase.initializeApp({
 });
 const db = firebase.database();
 
+// ── 앱 전체를 window.onload 로 감싸기 ──
+window.onload = function() {
 // ── 사용자 ──
 const USERS=[
   {id:0,name:'김민종',studentId:'2101042',emoji:'👑',color:'#C9A84C',bg:'rgba(201,168,76,.15)',isAdmin:true},
@@ -1699,18 +1701,17 @@ function restoreTimer() {
 }
 
 // 예약 AM/PM 표시
-document.addEventListener('DOMContentLoaded', () => {
+// DOMContentLoaded (window.onload 로 대체됨) - {
+  // schedAmPm 초기화
   const si = document.getElementById('schedTime');
   if (si) {
-    const updateAmPm = () => {
+    si.addEventListener('change', () => {
       const h = parseInt(si.value.split(':')[0]);
       const el = document.getElementById('schedAmPm');
       if (el) el.textContent = h < 12 ? '오전 (AM)' : '오후 (PM)';
-    };
-    si.addEventListener('change', updateAmPm);
-    updateAmPm();
+    });
   }
-});
+// };
 
 
 
@@ -2238,35 +2239,5 @@ if('serviceWorker' in navigator){
       .catch(e=>console.log('SW 등록 실패:', e));
   });
 }
+};
 </script>
-
-<!-- ══ 비상 알림 배너 ══ -->
-<div id="emgBox">
-  <div class="emg-top">
-    <div class="emg-icon">🚨</div>
-    <div class="emg-body">
-      <div class="emg-title">⚡ 전력 이상 감지!</div>
-      <div class="emg-msg" id="emgMsg">전력 사용량이 임계값을 초과했어요</div>
-    </div>
-  </div>
-  <div class="emg-watt"><span id="emgWatt">0</span> W <span>현재 전력</span></div>
-  <div class="emg-btns">
-    <button class="emg-cut" onclick="emergencyCut()">🔌 전체 전기 차단</button>
-    <button class="emg-close" onclick="emgHide()">무시하기</button>
-  </div>
-  <div id="emgBar"></div>
-</div>
-
-<!-- ══ 타이머 완료 알림 배너 ══ -->
-<div id="tnBox">
-  <div id="tnIcon">⏰</div>
-  <div id="tnBody">
-    <div id="tnTitle">타이머 완료</div>
-    <div id="tnMsg">설정한 시간이 됐어요</div>
-  </div>
-  <button id="tnClose" onclick="tnHide()">끄기</button>
-  <div id="tnBar"></div>
-</div>
-
-</body>
-</html>
