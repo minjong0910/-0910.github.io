@@ -215,6 +215,36 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
   animation:tnpulse 1s ease-in-out infinite alternate;}
 @keyframes tnpulse{0%{opacity:1;}100%{opacity:0.4;}}
 
+/* ── 전력 대시보드 ── */
+.pw-hero{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:18px;margin-bottom:10px;}
+.pw-now{display:flex;align-items:flex-end;justify-content:center;gap:6px;margin-bottom:6px;}
+.pw-watt{font-size:56px;font-weight:800;color:var(--gold);font-family:'DM Mono',monospace;line-height:1;}
+.pw-unit{font-size:16px;color:var(--tx2);font-weight:600;margin-bottom:8px;}
+.pw-bar-wrap{background:var(--surf);border-radius:8px;height:10px;overflow:hidden;margin-bottom:6px;}
+.pw-bar{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--on),var(--gold));transition:width .8s ease;}
+.pw-bar.warn{background:linear-gradient(90deg,var(--gold),#FF9500);}
+.pw-bar.danger{background:linear-gradient(90deg,#FF9500,var(--red));}
+.pw-status{font-size:11px;color:var(--tx2);text-align:center;}
+.pw-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.pw-card{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:12px;text-align:center;}
+.pw-card-val{font-size:20px;font-weight:800;font-family:'DM Mono',monospace;color:var(--tx);}
+.pw-card-lbl{font-size:9px;color:var(--tx2);margin-top:3px;letter-spacing:.5px;}
+.pw-graph{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:10px;}
+.pw-graph-title{font-size:11px;font-weight:700;color:var(--tx2);margin-bottom:10px;letter-spacing:.5px;}
+.pw-canvas-wrap{position:relative;height:140px;}
+.pw-chart{width:100%;height:140px;}
+.pw-logs{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:10px;}
+.pw-log-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr);}
+.pw-log-item:last-child{border-bottom:none;}
+.pw-log-time{font-size:10px;color:var(--tx2);font-family:'DM Mono',monospace;}
+.pw-log-val{font-size:13px;font-weight:700;font-family:'DM Mono',monospace;}
+.pw-threshold{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:10px;}
+.pw-th-row{display:flex;align-items:center;gap:10px;margin-top:8px;}
+.pw-th-inp{background:var(--surf);border:1.5px solid var(--bdr);border-radius:8px;color:var(--tx);font-size:18px;font-weight:700;font-family:'DM Mono',monospace;text-align:center;padding:8px;width:100px;}
+.pw-th-inp:focus{outline:none;border-color:var(--gold);}
+.pw-th-btn{background:var(--gold);border:none;border-radius:8px;color:#0A0E1A;font-size:12px;font-weight:800;padding:9px 16px;cursor:pointer;}
+.pw-refresh{width:100%;padding:11px;background:var(--surf);border:1.5px solid var(--bdr);border-radius:10px;color:var(--tx2);font-size:12px;font-weight:700;cursor:pointer;margin-bottom:8px;}
+
 /* ── 비상 알림 시스템 ── */
 #emgBox{
   position:fixed;top:14px;left:50%;
@@ -348,6 +378,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
       <div class="mbtn" onclick="openDrw()"><div class="mline"></div><div class="mline"></div><div class="mline"></div></div>
       <div><div class="htit">스마트홈 제어</div><div class="hsub">원 스위치 도어센서</div></div>
     </div>
+    <div class="gbtn" onclick="go('p-power')"><span style="font-size:13px">⚡</span><span class="gbtn-t">전력</span></div>
     <div class="gbtn" onclick="go('p-timer')"><span style="font-size:13px">⏰</span><span class="gbtn-t">타이머</span></div>
     <div class="gbtn" onclick="testEmergency()" style="border-color:rgba(201,80,76,.4)"><span style="font-size:13px">🚨</span><span class="gbtn-t" style="color:#C9504C">비상테스트</span></div>
     <div class="gbtn" onclick="go('p-share')"><span style="font-size:13px">👥</span><span class="gbtn-t">공유 대상</span></div>
@@ -476,6 +507,79 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 </div>
 
 <!-- 공유 대상 -->
+<div class="page" id="p-power">
+  <div class="hdr">
+    <div class="hl">
+      <div class="bbtn" onclick="go('p-home')">←</div>
+      <div><div class="htit">전력 대시보드</div><div class="hsub">Tapo P110M 실시간 전력 모니터링</div></div>
+    </div>
+  </div>
+  <div class="gbar"></div>
+  <div class="pcon">
+
+    <!-- 현재 전력 히어로 -->
+    <div class="pw-hero">
+      <div class="pw-now">
+        <div class="pw-watt" id="pwNow">0</div>
+        <div class="pw-unit">W</div>
+      </div>
+      <div class="pw-bar-wrap">
+        <div class="pw-bar" id="pwBar" style="width:0%"></div>
+      </div>
+      <div class="pw-status" id="pwStatus">전력 데이터 로딩 중...</div>
+    </div>
+
+    <!-- 요약 카드 4개 -->
+    <div class="pw-cards">
+      <div class="pw-card">
+        <div class="pw-card-val" id="pwToday">0 Wh</div>
+        <div class="pw-card-lbl">오늘 사용량</div>
+      </div>
+      <div class="pw-card">
+        <div class="pw-card-val" id="pwMonth">0 kWh</div>
+        <div class="pw-card-lbl">이번 달 사용량</div>
+      </div>
+      <div class="pw-card">
+        <div class="pw-card-val" id="pwCost">0원</div>
+        <div class="pw-card-lbl">예상 전기요금</div>
+      </div>
+      <div class="pw-card">
+        <div class="pw-card-val" id="pwPeak">0 W</div>
+        <div class="pw-card-lbl">오늘 최대 전력</div>
+      </div>
+    </div>
+
+    <!-- 전력 그래프 -->
+    <div class="pw-graph">
+      <div class="pw-graph-title">⚡ 최근 전력 변화 (최대 20개)</div>
+      <div class="pw-canvas-wrap">
+        <canvas class="pw-chart" id="pwChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 최근 기록 -->
+    <div class="pw-logs">
+      <div style="font-size:11px;font-weight:700;color:var(--tx2);margin-bottom:8px;letter-spacing:.5px;">📋 최근 전력 기록</div>
+      <div id="pwLogList"><div style="color:var(--tx2);font-size:12px;text-align:center;padding:10px">데이터 없음</div></div>
+    </div>
+
+    <!-- 임계값 설정 -->
+    <div class="pw-threshold">
+      <div style="font-size:12px;font-weight:700;color:var(--tx);">⚙️ 비상 임계값 설정</div>
+      <div style="font-size:11px;color:var(--tx2);margin-top:4px;">이 값 초과 시 비상 알림 발동</div>
+      <div class="pw-th-row">
+        <input class="pw-th-inp" type="number" id="pwThresh" value="2000" min="100" max="3600">
+        <span style="color:var(--tx2);font-size:14px;">W</span>
+        <button class="pw-th-btn" onclick="savePwThresh()">저장</button>
+      </div>
+    </div>
+
+    <!-- 새로고침 -->
+    <button class="pw-refresh" onclick="loadPowerData()">🔄 데이터 새로고침</button>
+
+  </div>
+</div>
+
 <div class="page" id="p-timer">
   <div class="hdr">
     <div class="hl"><div class="bbtn" onclick="go('p-home')">←</div><div><div class="htit">타이머 & 예약</div><div class="hsub">수면 타이머 · 예약 제어</div></div></div>
@@ -633,6 +737,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 <div class="drw" id="drw">
   <div class="dhdr"><div class="dtit">원 스위치 도어센서</div><div class="dsub" id="drwSub">IT융합통신학과 졸업작품</div></div>
   <div class="ditm act"  onclick="go('p-home');  closeDrw()"><span class="dic">🏠</span>홈 대시보드</div>
+  <div class="ditm"      onclick="go('p-power'); closeDrw()"><span class="dic">⚡</span>전력 대시보드</div>
   <div class="ditm"      onclick="go('p-timer'); closeDrw()"><span class="dic">⏰</span>타이머 &amp; 예약</div>
   <div class="ditm"      onclick="go('p-hist');  closeDrw()"><span class="dic">📊</span>사용 기록</div>
   <div class="ditm"      onclick="go('p-notif');closeDrw()"><span class="dic">🔔</span>알림 설정</div>
@@ -760,6 +865,9 @@ function initFB(){
     }
     if(document.getElementById('p-share').classList.contains('show')) renderShare();
   });
+
+  // ── 전력 리스너 초기화 ──
+  initPowerListener();
 
   // ── 비상 알림 Firebase 리스너 ──
   db.ref('/emergency').on('value', snap => {
@@ -1039,7 +1147,7 @@ function sendReq(){
   toast('관리자(김민종)에게 요청을 보냈어요 📩');
 }
 
-function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));document.getElementById(id).classList.add('show');if(id==='p-hist')renderLogs();if(id==='p-notif')renderNotifs();if(id==='p-share')renderShare();if(id==='p-timer')renderSched();}
+function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));document.getElementById(id).classList.add('show');if(id==='p-hist')renderLogs();if(id==='p-notif')renderNotifs();if(id==='p-share')renderShare();if(id==='p-timer')renderSched();if(id==='p-power')loadPowerData();}
 function openDrw(){document.getElementById('drw').classList.add('open');document.getElementById('dovl').classList.add('open');}
 function closeDrw(){document.getElementById('drw').classList.remove('open');document.getElementById('dovl').classList.remove('open');}
 function nowStr(){const d=new Date();return'오늘 '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
@@ -1421,6 +1529,222 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+
+
+// ══════════════════════════════════════
+// 전력 대시보드
+// ══════════════════════════════════════
+let pwHistory  = [];   // 전력 이력 (최대 20개)
+let pwPeak     = 0;    // 오늘 최대 전력
+let pwThresh   = 2000; // 비상 임계값
+let pwChart    = null; // 캔버스 차트
+
+// ── Firebase 전력 데이터 로드 ──
+function loadPowerData() {
+  try {
+    // 현재 전력
+    db.ref('/power').once('value', snap => {
+      const d = snap.val() || {};
+      const w = d.current_watt || 0;
+      pwThresh = d.threshold || 2000;
+      document.getElementById('pwThresh').value = pwThresh;
+      updatePwHero(w);
+
+      // 이력에 추가
+      const now = new Date();
+      const label = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+      if (pwHistory.length === 0 || pwHistory[pwHistory.length-1].w !== w) {
+        pwHistory.push({ label, w });
+        if (pwHistory.length > 20) pwHistory.shift();
+      }
+      if (w > pwPeak) pwPeak = w;
+
+      // 누적 사용량 (Firebase /power/logs)
+      db.ref('/power/logs').limitToLast(24).once('value', logSnap => {
+        let todayWh = 0, monthKwh = 0;
+        logSnap.forEach(c => {
+          const v = c.val();
+          todayWh  += (v.wh  || 0);
+          monthKwh += (v.kwh || 0);
+        });
+        const cost = Math.round(monthKwh * 100); // 대략 100원/kWh
+        document.getElementById('pwToday').textContent  = Math.round(todayWh)  + ' Wh';
+        document.getElementById('pwMonth').textContent  = monthKwh.toFixed(2)  + ' kWh';
+        document.getElementById('pwCost').textContent   = cost.toLocaleString() + '원';
+        document.getElementById('pwPeak').textContent   = Math.round(pwPeak)   + ' W';
+        renderPwLogs(logSnap);
+      });
+
+      drawPwChart();
+    });
+  } catch(e) { console.log('전력 로드 오류:', e); }
+}
+
+// ── 히어로 업데이트 ──
+function updatePwHero(w) {
+  const el  = document.getElementById('pwNow');
+  const bar = document.getElementById('pwBar');
+  const st  = document.getElementById('pwStatus');
+  if (!el) return;
+
+  el.textContent = Math.round(w);
+  const pct = Math.min(100, (w / pwThresh) * 100);
+
+  if (bar) {
+    bar.style.width = pct + '%';
+    bar.className = 'pw-bar' +
+      (pct >= 90 ? ' danger' : pct >= 70 ? ' warn' : '');
+  }
+  if (st) {
+    if (w === 0)       st.textContent = '⚪ 대기 중 (전기 꺼짐)';
+    else if (pct < 50) st.textContent = '🟢 정상 — ' + Math.round(pct) + '% 사용 중';
+    else if (pct < 80) st.textContent = '🟡 주의 — ' + Math.round(pct) + '% 사용 중';
+    else if (pct < 100) st.textContent = '🟠 경고 — 임계값 근접!';
+    else               st.textContent = '🔴 위험 — 임계값 초과!';
+  }
+
+  // 오늘 최대 갱신
+  if (w > pwPeak) {
+    pwPeak = w;
+    const pk = document.getElementById('pwPeak');
+    if (pk) pk.textContent = Math.round(pwPeak) + ' W';
+  }
+}
+
+// ── 그래프 그리기 (Canvas) ──
+function drawPwChart() {
+  const canvas = document.getElementById('pwChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W   = canvas.offsetWidth;
+  const H   = canvas.offsetHeight;
+  canvas.width  = W;
+  canvas.height = H;
+
+  if (pwHistory.length < 2) {
+    ctx.fillStyle = '#8A9BB8';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('데이터 수집 중...', W/2, H/2);
+    return;
+  }
+
+  const maxW   = Math.max(...pwHistory.map(p => p.w), pwThresh) * 1.1;
+  const padL   = 36, padR = 10, padT = 10, padB = 24;
+  const gW     = W - padL - padR;
+  const gH     = H - padT - padB;
+  const step   = gW / (pwHistory.length - 1);
+
+  ctx.clearRect(0, 0, W, H);
+
+  // 격자선
+  ctx.strokeStyle = '#2A3354';
+  ctx.lineWidth   = 0.5;
+  [0, 0.25, 0.5, 0.75, 1].forEach(r => {
+    const y = padT + gH * (1 - r);
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+    ctx.fillStyle = '#3A4A6A'; ctx.font = '9px monospace'; ctx.textAlign = 'right';
+    ctx.fillText(Math.round(maxW * r) + 'W', padL - 4, y + 3);
+  });
+
+  // 임계값 선
+  const thY = padT + gH * (1 - pwThresh / maxW);
+  ctx.strokeStyle = '#C9504C'; ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath(); ctx.moveTo(padL, thY); ctx.lineTo(W - padR, thY); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#C9504C'; ctx.font = '9px monospace'; ctx.textAlign = 'left';
+  ctx.fillText('임계값', padL + 4, thY - 3);
+
+  // 그라데이션 채우기
+  const grad = ctx.createLinearGradient(0, padT, 0, padT + gH);
+  grad.addColorStop(0, 'rgba(201,168,76,.4)');
+  grad.addColorStop(1, 'rgba(201,168,76,.02)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(padL, padT + gH);
+  pwHistory.forEach((p, i) => {
+    const x = padL + i * step;
+    const y = padT + gH * (1 - p.w / maxW);
+    i === 0 ? ctx.lineTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.lineTo(padL + (pwHistory.length - 1) * step, padT + gH);
+  ctx.closePath(); ctx.fill();
+
+  // 선
+  ctx.strokeStyle = '#C9A84C'; ctx.lineWidth = 2;
+  ctx.beginPath();
+  pwHistory.forEach((p, i) => {
+    const x = padL + i * step;
+    const y = padT + gH * (1 - p.w / maxW);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // 점 + 라벨
+  pwHistory.forEach((p, i) => {
+    const x = padL + i * step;
+    const y = padT + gH * (1 - p.w / maxW);
+    ctx.fillStyle = p.w >= pwThresh ? '#C9504C' : '#C9A84C';
+    ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2); ctx.fill();
+    if (i % Math.ceil(pwHistory.length / 5) === 0) {
+      ctx.fillStyle = '#8A9BB8'; ctx.font = '8px monospace'; ctx.textAlign = 'center';
+      ctx.fillText(p.label, x, H - 4);
+    }
+  });
+}
+
+// ── 최근 기록 렌더링 ──
+function renderPwLogs(snap) {
+  const el = document.getElementById('pwLogList');
+  if (!el) return;
+  const logs = [];
+  snap.forEach(c => logs.unshift({ id: c.key, ...c.val() }));
+  if (logs.length === 0) {
+    el.innerHTML = '<div style="color:var(--tx2);font-size:12px;text-align:center;padding:10px">아직 기록 없음</div>';
+    return;
+  }
+  el.innerHTML = logs.slice(0, 10).map(l => {
+    const wColor = l.wh > 500 ? '#FF9500' : 'var(--gold)';
+    return `<div class="pw-log-item">
+      <div>
+        <div class="pw-log-time">${l.time || '-'}</div>
+        <div style="font-size:11px;color:var(--tx2)">${l.wh || 0} Wh 사용</div>
+      </div>
+      <div class="pw-log-val" style="color:${wColor}">${(l.wh/1000).toFixed(3)} kWh</div>
+    </div>`;
+  }).join('');
+}
+
+// ── 임계값 저장 ──
+function savePwThresh() {
+  const v = parseInt(document.getElementById('pwThresh').value) || 2000;
+  pwThresh = v;
+  try { db.ref('/power/threshold').set(v); } catch(e) {}
+  toast('임계값 ' + v + 'W 로 저장됐어요 ✅');
+}
+
+// ── 실시간 전력 리스너 (Firebase) ──
+function initPowerListener() {
+  try {
+    db.ref('/power/current_watt').on('value', snap => {
+      const w = snap.val() || 0;
+      if (document.getElementById('p-power')?.classList.contains('show')) {
+        updatePwHero(w);
+        const now   = new Date();
+        const label = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+        if (pwHistory.length === 0 || pwHistory[pwHistory.length-1].w !== w) {
+          pwHistory.push({ label, w });
+          if (pwHistory.length > 20) pwHistory.shift();
+          drawPwChart();
+        }
+      }
+      // 홈 화면 전력 배지 업데이트
+      const badge = document.getElementById('powerBadge');
+      if (badge) badge.textContent = Math.round(w) + 'W';
+    });
+  } catch(e) {}
+}
 
 // ══════════════════════════════════════
 // 비상 알림 시스템
