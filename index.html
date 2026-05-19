@@ -179,6 +179,46 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 .toast.show{transform:translateX(-50%) translateY(0);}
 .empty{text-align:center;padding:28px 20px;color:var(--tx2);font-size:13px;}
 
+/* ── 타이머 페이지 ── */
+.timer-hero{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:20px 16px;margin-bottom:12px;text-align:center;}
+.timer-clock{font-size:52px;font-weight:800;color:var(--gold);font-family:'DM Mono',monospace;letter-spacing:2px;line-height:1.1;}
+.timer-clock.active{color:var(--on);animation:tpulse 1s ease-in-out infinite alternate;}
+@keyframes tpulse{0%{opacity:1;}100%{opacity:.7;}}
+.timer-label{font-size:11px;color:var(--tx2);margin-top:4px;}
+.timer-target{font-size:12px;color:var(--gold);margin-top:6px;font-weight:600;}
+.timer-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+.tbtn{background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;padding:12px 6px;text-align:center;cursor:pointer;transition:all .2s;}
+.tbtn:active{transform:scale(.95);}
+.tbtn.sel{border-color:var(--gold);background:var(--gd);}
+.tbtn-time{font-size:16px;font-weight:700;color:var(--gold);font-family:'DM Mono',monospace;}
+.tbtn-label{font-size:9px;color:var(--tx2);margin-top:2px;}
+.timer-action{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.tact{background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;padding:12px;text-align:center;cursor:pointer;transition:all .2s;}
+.tact.sel{border-color:var(--blue);}
+.tact-icon{font-size:22px;margin-bottom:4px;}
+.tact-label{font-size:11px;font-weight:600;color:var(--tx2);}
+.tact.sel .tact-label{color:var(--blue);}
+.custom-time{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:14px;margin-bottom:12px;}
+.custom-row{display:flex;align-items:center;gap:10px;margin-top:8px;}
+.custom-inp{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;color:var(--tx);font-size:18px;font-weight:700;font-family:'DM Mono',monospace;text-align:center;width:64px;padding:8px 4px;}
+.custom-inp:focus{outline:none;border-color:var(--gold);}
+.timer-start{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),#E8C87A);border:none;border-radius:14px;color:#0A0E1A;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.5px;margin-bottom:8px;}
+.timer-stop{width:100%;padding:12px;background:rgba(201,80,76,.1);border:1.5px solid #C9504C;border-radius:14px;color:#C9504C;font-size:13px;font-weight:700;cursor:pointer;display:none;}
+.sched-box{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:12px;}
+.sched-row{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;}
+.sched-time-inp{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;color:var(--tx);font-size:15px;font-weight:600;font-family:'DM Mono',monospace;padding:8px 10px;width:110px;}
+.sched-time-inp:focus{outline:none;border-color:var(--gold);}
+.sched-toggle{width:46px;height:26px;background:var(--surf);border:1px solid var(--bdr);border-radius:13px;position:relative;cursor:pointer;flex-shrink:0;}
+.sched-toggle.on{background:var(--on);border-color:var(--on);}
+.sched-toggle::after{content:'';position:absolute;width:20px;height:20px;background:white;border-radius:50%;top:2px;left:2px;transition:all .25s;}
+.sched-toggle.on::after{left:22px;}
+.sched-list{margin-top:10px;}
+.sched-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surf);border-radius:10px;margin-bottom:6px;border:1px solid var(--bdr);}
+.sched-info{display:flex;align-items:center;gap:8px;}
+.sched-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sched-del{background:none;border:none;color:var(--tx2);font-size:16px;cursor:pointer;padding:4px 8px;}
+.sched-add-btn{width:100%;padding:11px;background:var(--surf);border:1.5px dashed var(--bdr);border-radius:10px;color:var(--tx2);font-size:13px;cursor:pointer;margin-top:4px;}
+
 /* ── 가상 시뮬레이션 ── */
 .sim-box{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:9px;}
 .sim-title{font-size:11px;font-weight:600;color:var(--tx2);font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
@@ -235,6 +275,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
       <div class="mbtn" onclick="openDrw()"><div class="mline"></div><div class="mline"></div><div class="mline"></div></div>
       <div><div class="htit">스마트홈 제어</div><div class="hsub">원 스위치 도어센서</div></div>
     </div>
+    <div class="gbtn" onclick="go('p-timer')"><span style="font-size:13px">⏰</span><span class="gbtn-t">타이머</span></div>
     <div class="gbtn" onclick="go('p-share')"><span style="font-size:13px">👥</span><span class="gbtn-t">공유 대상</span></div>
   </div>
   <div class="gbar"></div>
@@ -361,6 +402,129 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 </div>
 
 <!-- 공유 대상 -->
+<div class="page" id="p-timer">
+  <div class="hdr">
+    <div class="hl"><div class="bbtn" onclick="go('p-home')">←</div><div><div class="htit">타이머 & 예약</div><div class="hsub">수면 타이머 · 예약 제어</div></div></div>
+  </div>
+  <div class="gbar"></div>
+  <div class="pcon">
+
+    <!-- 시계 표시 -->
+    <div class="timer-hero">
+      <div class="timer-clock" id="timerClock">00:00:00</div>
+      <div class="timer-label" id="timerLabel">타이머 대기 중</div>
+      <div class="timer-target" id="timerTarget"></div>
+    </div>
+
+    <!-- 발표용 초 단위 빠른 선택 -->
+    <div class="stit">⚡ 발표용 (초 단위)</div>
+    <div class="timer-btns">
+      <div class="tbtn" onclick="quickSec(5)" id="qs-5">
+        <div class="tbtn-time">5초</div>
+        <div class="tbtn-label">시연용</div>
+      </div>
+      <div class="tbtn" onclick="quickSec(10)" id="qs-10">
+        <div class="tbtn-time">10초</div>
+        <div class="tbtn-label">데모</div>
+      </div>
+      <div class="tbtn" onclick="quickSec(30)" id="qs-30">
+        <div class="tbtn-time">30초</div>
+        <div class="tbtn-label">발표</div>
+      </div>
+      <div class="tbtn" onclick="quickSec(60)" id="qs-60">
+        <div class="tbtn-time">60초</div>
+        <div class="tbtn-label">1분</div>
+      </div>
+      <div class="tbtn" onclick="quickSec(90)" id="qs-90">
+        <div class="tbtn-time">90초</div>
+        <div class="tbtn-label">1분 30초</div>
+      </div>
+      <div class="tbtn" onclick="quickSec(120)" id="qs-120">
+        <div class="tbtn-time">2분</div>
+        <div class="tbtn-label">시연</div>
+      </div>
+    </div>
+
+    <!-- 빠른 선택 버튼 -->
+    <div class="stit">🌙 수면 타이머</div>
+    <div class="timer-btns">
+      <div class="tbtn" onclick="quickTimer(30)" id="qt-30">
+        <div class="tbtn-time">30분</div>
+        <div class="tbtn-label">짧은 낮잠</div>
+      </div>
+      <div class="tbtn" onclick="quickTimer(60)" id="qt-60">
+        <div class="tbtn-time">1시간</div>
+        <div class="tbtn-label">일반</div>
+      </div>
+      <div class="tbtn" onclick="quickTimer(120)" id="qt-120">
+        <div class="tbtn-time">2시간</div>
+        <div class="tbtn-label">낮잠</div>
+      </div>
+      <div class="tbtn" onclick="quickTimer(360)" id="qt-360">
+        <div class="tbtn-time">6시간</div>
+        <div class="tbtn-label">수면</div>
+      </div>
+      <div class="tbtn" onclick="quickTimer(480)" id="qt-480">
+        <div class="tbtn-time">8시간</div>
+        <div class="tbtn-label">숙면 😴</div>
+      </div>
+      <div class="tbtn" onclick="quickTimer(540)" id="qt-540">
+        <div class="tbtn-time">9시간</div>
+        <div class="tbtn-label">충분한 수면</div>
+      </div>
+    </div>
+
+    <!-- 직접 설정 -->
+    <div class="stit">직접 설정</div>
+    <div class="custom-time">
+      <div style="font-size:11px;color:var(--tx2);margin-bottom:4px;">시간 · 분 · 초를 직접 입력하세요</div>
+      <div class="custom-row">
+        <input class="custom-inp" id="custH" type="number" min="0" max="23" placeholder="0" value="0" oninput="clearQuick()">
+        <span style="color:var(--tx2);font-size:14px;font-weight:700;">시</span>
+        <input class="custom-inp" id="custM" type="number" min="0" max="59" placeholder="0" value="0" oninput="clearQuick()">
+        <span style="color:var(--tx2);font-size:14px;font-weight:700;">분</span>
+        <input class="custom-inp" id="custS" type="number" min="0" max="59" placeholder="0" value="0" oninput="clearQuick()">
+        <span style="color:var(--tx2);font-size:14px;font-weight:700;">초</span>
+      </div>
+    </div>
+
+    <!-- 타이머 종료 동작 -->
+    <div class="stit">타이머 종료 시</div>
+    <div class="timer-action">
+      <div class="tact sel" id="tact-off" onclick="setTimerAction('off')">
+        <div class="tact-icon">🌙</div>
+        <div class="tact-label">전체 끄기</div>
+      </div>
+      <div class="tact" id="tact-on" onclick="setTimerAction('on')">
+        <div class="tact-icon">💡</div>
+        <div class="tact-label">전체 켜기</div>
+      </div>
+    </div>
+
+    <!-- 시작/정지 버튼 -->
+    <button class="timer-start" id="timerStartBtn" onclick="startTimer()">⏰ 타이머 시작</button>
+    <button class="timer-stop" id="timerStopBtn" onclick="stopTimer()">■ 타이머 취소</button>
+
+    <!-- 예약 제어 -->
+    <div class="stit" style="margin-top:16px;">예약 제어</div>
+    <div class="sched-box">
+      <div style="font-size:12px;color:var(--tx2);">특정 시간에 자동으로 켜거나 끌 수 있어요</div>
+      <div class="sched-row">
+        <input class="sched-time-inp" type="time" id="schedTime" value="07:00">
+        <div class="tact" id="sact-off" onclick="setSchedAction('off')" style="padding:8px 12px;flex:1;">
+          <div class="tact-label">🌙 끄기</div>
+        </div>
+        <div class="tact sel" id="sact-on" onclick="setSchedAction('on')" style="padding:8px 12px;flex:1;">
+          <div class="tact-label">💡 켜기</div>
+        </div>
+        <button onclick="addSched()" style="background:var(--gold);border:none;border-radius:8px;color:#0A0E1A;font-size:12px;font-weight:700;padding:8px 12px;cursor:pointer;">추가</button>
+      </div>
+      <div class="sched-list" id="schedList"></div>
+    </div>
+
+  </div>
+</div>
+
 <div class="page" id="p-share">
   <div class="hdr">
     <div class="hl"><div class="bbtn" onclick="go('p-home')">←</div><div><div class="htit">공유 대상</div><div class="hsub">전체 관리자 1명 + 멤버 최대 4명</div></div></div>
@@ -374,6 +538,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 <div class="drw" id="drw">
   <div class="dhdr"><div class="dtit">원 스위치 도어센서</div><div class="dsub" id="drwSub">IT융합통신학과 졸업작품</div></div>
   <div class="ditm act"  onclick="go('p-home');  closeDrw()"><span class="dic">🏠</span>홈 대시보드</div>
+  <div class="ditm"      onclick="go('p-timer'); closeDrw()"><span class="dic">⏰</span>타이머 &amp; 예약</div>
   <div class="ditm"      onclick="go('p-hist');  closeDrw()"><span class="dic">📊</span>사용 기록</div>
   <div class="ditm"      onclick="go('p-notif');closeDrw()"><span class="dic">🔔</span>알림 설정</div>
   <div class="ditm"      onclick="go('p-share');closeDrw()"><span class="dic">👥</span>공유 대상</div>
@@ -499,6 +664,12 @@ function initFB(){
       defaults.forEach(m=>db.ref('/members').push(m));
     }
     if(document.getElementById('p-share').classList.contains('show')) renderShare();
+  });
+
+  // 예약 목록 실시간 로드
+  db.ref('/schedules').on('value', snap => {
+    schedList = [];
+    snap.forEach(c => schedList.push({ id: c.key, ...c.val() }));
   });
 }
 
@@ -757,12 +928,246 @@ function sendReq(){
   toast('관리자(김민종)에게 요청을 보냈어요 📩');
 }
 
-function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));document.getElementById(id).classList.add('show');if(id==='p-hist')renderLogs();if(id==='p-notif')renderNotifs();if(id==='p-share')renderShare();}
+function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));document.getElementById(id).classList.add('show');if(id==='p-hist')renderLogs();if(id==='p-notif')renderNotifs();if(id==='p-share')renderShare();if(id==='p-timer')renderSched();}
 function openDrw(){document.getElementById('drw').classList.add('open');document.getElementById('dovl').classList.add('open');}
 function closeDrw(){document.getElementById('drw').classList.remove('open');document.getElementById('dovl').classList.remove('open');}
 function nowStr(){const d=new Date();return'오늘 '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
 let tt;
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2400);}
+
+
+// ══════════════════════════════════════
+// 타이머 & 예약 제어
+// ══════════════════════════════════════
+let timerInterval = null;
+let timerEndTime  = null;
+let timerAction   = 'off'; // 타이머 종료 시 동작
+let schedAction   = 'on';  // 예약 동작
+let schedList     = [];    // 예약 목록
+let schedChecker  = null;  // 예약 체크 인터벌
+let selectedMin   = 0;     // 선택된 분
+
+// 빠른 선택 — 분 단위
+function quickTimer(min) {
+  selectedMin = min * 60; // 초로 저장
+  document.querySelectorAll('.tbtn').forEach(b => b.classList.remove('sel'));
+  document.getElementById('qt-' + min)?.classList.add('sel');
+  document.getElementById('custH').value = Math.floor(min / 60);
+  document.getElementById('custM').value = min % 60;
+  document.getElementById('custS').value = 0;
+}
+
+// 빠른 선택 — 초 단위 (발표용)
+function quickSec(sec) {
+  selectedMin = sec; // 초로 저장
+  document.querySelectorAll('.tbtn').forEach(b => b.classList.remove('sel'));
+  document.getElementById('qs-' + sec)?.classList.add('sel');
+  document.getElementById('custH').value = 0;
+  document.getElementById('custM').value = Math.floor(sec / 60);
+  document.getElementById('custS').value = sec % 60;
+}
+
+function clearQuick() {
+  document.querySelectorAll('.tbtn').forEach(b => b.classList.remove('sel'));
+  selectedMin = 0;
+}
+
+// 타이머 종료 동작 선택
+function setTimerAction(act) {
+  timerAction = act;
+  document.getElementById('tact-off').classList.toggle('sel', act === 'off');
+  document.getElementById('tact-on').classList.toggle('sel', act === 'on');
+}
+
+// 예약 동작 선택
+function setSchedAction(act) {
+  schedAction = act;
+  document.getElementById('sact-off').classList.toggle('sel', act === 'off');
+  document.getElementById('sact-on').classList.toggle('sel', act === 'on');
+}
+
+// 타이머 시작
+function startTimer() {
+  const h = parseInt(document.getElementById('custH').value) || 0;
+  const m = parseInt(document.getElementById('custM').value) || 0;
+  const s = parseInt(document.getElementById('custS').value) || 0;
+  const totalSec = h * 3600 + m * 60 + s;
+  if (totalSec <= 0) { toast('시간을 설정해주세요'); return; }
+
+  timerEndTime = Date.now() + totalSec * 1000;
+
+  // Firebase에 타이머 저장
+  if (Firebase.ready()) {
+    db.ref('/timer').set({
+      endTime: timerEndTime,
+      action: timerAction,
+      active: true,
+      setBy: curUser ? curUser.name : '사용자'
+    });
+  }
+
+  clearInterval(timerInterval);
+  timerInterval = setInterval(tickTimer, 1000);
+  tickTimer();
+
+  document.getElementById('timerStartBtn').style.display = 'none';
+  document.getElementById('timerStopBtn').style.display = 'block';
+
+  const actionTxt = timerAction === 'off' ? '전체 끄기' : '전체 켜기';
+  const endDate = new Date(timerEndTime);
+  const hh = String(endDate.getHours()).padStart(2,'0');
+  const mm = String(endDate.getMinutes()).padStart(2,'0');
+  document.getElementById('timerTarget').textContent = `${hh}:${mm} 에 ${actionTxt} 예정`;
+  document.getElementById('timerLabel').textContent = '타이머 작동 중 🌙';
+
+  const s2 = parseInt(document.getElementById('custS').value)||0;
+  toast(`타이머 시작! ${h > 0 ? h+'시간 ' : ''}${m > 0 ? m+'분 ' : ''}${s2 > 0 ? s2+'초 ' : ''}후 ${actionTxt}`);
+}
+
+// 타이머 틱
+function tickTimer() {
+  if (!timerEndTime) return;
+  const remaining = Math.max(0, Math.floor((timerEndTime - Date.now()) / 1000));
+  const h = Math.floor(remaining / 3600);
+  const m = Math.floor((remaining % 3600) / 60);
+  const s = remaining % 60;
+  const clock = document.getElementById('timerClock');
+  if (clock) {
+    clock.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    clock.classList.toggle('active', remaining > 0);
+  }
+  if (remaining <= 0) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    timerEndTime = null;
+    document.getElementById('timerLabel').textContent = '타이머 완료! ✅';
+    document.getElementById('timerTarget').textContent = '';
+    document.getElementById('timerStartBtn').style.display = 'block';
+    document.getElementById('timerStopBtn').style.display = 'none';
+    // 타이머 동작 실행
+    const newState = timerAction === 'on';
+    ROOMS.forEach(r => {
+      roomState[r] = newState;
+      db.ref('/rooms/' + r + '/state').set(newState);
+      updateRoomUI(r);
+    });
+    db.ref('/relay/state').set(newState);
+    db.ref('/relay/source').set('timer');
+    db.ref('/timer/active').set(false);
+    addLog(curUser ? curUser.name : '타이머', newState ? '켬' : '끔', '집안 전체');
+    toast(timerAction === 'off' ? '타이머 완료 — 전체 꺼졌어요 🌙' : '타이머 완료 — 전체 켜졌어요 💡');
+  }
+}
+
+// 타이머 취소
+function stopTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  timerEndTime = null;
+  db.ref('/timer/active').set(false);
+  document.getElementById('timerClock').textContent = '00:00:00';
+  document.getElementById('timerClock').classList.remove('active');
+  document.getElementById('timerLabel').textContent = '타이머 대기 중';
+  document.getElementById('timerTarget').textContent = '';
+  document.getElementById('timerStartBtn').style.display = 'block';
+  document.getElementById('timerStopBtn').style.display = 'none';
+  document.querySelectorAll('.tbtn').forEach(b => b.classList.remove('sel'));
+  document.getElementById('custH').value = 0;
+  document.getElementById('custM').value = 0;
+  toast('타이머가 취소됐어요');
+}
+
+// 예약 추가
+function addSched() {
+  const time = document.getElementById('schedTime').value;
+  if (!time) { toast('시간을 선택해주세요'); return; }
+  const id = Date.now();
+  const item = { id, time, action: schedAction };
+  schedList.push(item);
+  // Firebase에 저장
+  db.ref('/schedules/' + id).set(item);
+  renderSched();
+  toast(`${time} ${schedAction === 'on' ? '켜기' : '끄기'} 예약 추가됐어요 ✅`);
+}
+
+// 예약 삭제
+function delSched(id) {
+  schedList = schedList.filter(s => s.id !== id);
+  db.ref('/schedules/' + id).remove();
+  renderSched();
+  toast('예약이 삭제됐어요');
+}
+
+// 예약 목록 렌더링
+function renderSched() {
+  db.ref('/schedules').once('value', snap => {
+    schedList = [];
+    snap.forEach(c => schedList.push({ id: c.key, ...c.val() }));
+    schedList.sort((a,b) => a.time.localeCompare(b.time));
+    const el = document.getElementById('schedList');
+    if (!el) return;
+    if (schedList.length === 0) {
+      el.innerHTML = '<div style="color:var(--tx2);font-size:12px;padding:10px 0;text-align:center;">예약이 없어요</div>';
+      return;
+    }
+    el.innerHTML = schedList.map(s => `
+      <div class="sched-item">
+        <div class="sched-info">
+          <div class="sched-dot" style="background:${s.action==='on'?'#4CAF82':'#C9A84C'}"></div>
+          <span style="font-size:14px;font-weight:700;color:var(--tx);font-family:'DM Mono',monospace">${s.time}</span>
+          <span style="font-size:11px;color:var(--tx2)">${s.action==='on'?'💡 켜기':'🌙 끄기'}</span>
+        </div>
+        <button class="sched-del" onclick="delSched('${s.id}')">✕</button>
+      </div>
+    `).join('');
+  });
+}
+
+// 예약 체커 — 1분마다 시간 확인
+function startSchedChecker() {
+  if (schedChecker) return;
+  schedChecker = setInterval(() => {
+    const now = new Date();
+    const cur = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    schedList.forEach(s => {
+      if (s.time === cur) {
+        const newState = s.action === 'on';
+        ROOMS.forEach(r => {
+          roomState[r] = newState;
+          db.ref('/rooms/' + r + '/state').set(newState);
+          updateRoomUI(r);
+        });
+        db.ref('/relay/state').set(newState);
+        db.ref('/relay/source').set('schedule');
+        addLog('예약', newState ? '켬' : '끔', '집안 전체');
+        toast(`예약 실행! ${s.time} ${newState ? '전체 켜짐 💡' : '전체 꺼짐 🌙'}`);
+      }
+    });
+  }, 60000); // 1분마다 체크
+}
+
+// Firebase 타이머 상태 복원 (앱 재시작 시)
+function restoreTimer() {
+  db.ref('/timer').once('value', snap => {
+    const t = snap.val();
+    if (t && t.active && t.endTime > Date.now()) {
+      timerEndTime = t.endTime;
+      timerAction  = t.action || 'off';
+      setTimerAction(timerAction);
+      clearInterval(timerInterval);
+      timerInterval = setInterval(tickTimer, 1000);
+      tickTimer();
+      document.getElementById('timerStartBtn').style.display = 'none';
+      document.getElementById('timerStopBtn').style.display = 'block';
+      const endDate = new Date(timerEndTime);
+      const hh = String(endDate.getHours()).padStart(2,'0');
+      const mm = String(endDate.getMinutes()).padStart(2,'0');
+      document.getElementById('timerTarget').textContent = `${hh}:${mm} 에 ${timerAction === 'off' ? '전체 끄기' : '전체 켜기'} 예정`;
+      document.getElementById('timerLabel').textContent = '타이머 작동 중 🌙';
+      toast('진행 중인 타이머를 복원했어요 ⏰');
+    }
+  });
+}
 
 // ── PWA 서비스워커 등록 ──
 if('serviceWorker' in navigator){
