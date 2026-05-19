@@ -366,6 +366,25 @@ button,input{font-family:inherit;}
 .loc-range-inp{flex:1;background:var(--surf);border:1.5px solid var(--bdr);border-radius:8px;color:var(--tx);font-size:16px;font-weight:700;font-family:'DM Mono',monospace;text-align:center;padding:8px;}
 .loc-range-inp:focus{outline:none;border-color:var(--gold);}
 .loc-log{background:var(--surf);border-radius:10px;padding:10px;font-size:11px;color:var(--tx2);margin-top:8px;max-height:120px;overflow-y:auto;}
+
+/* ── 문 열림 감지 ── */
+#doorBox{display:none;position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-200px);z-index:99997;background:#1A2A1A;border:2px solid #4CAF82;border-radius:16px;padding:14px 16px;align-items:center;gap:12px;width:330px;max-width:93vw;box-shadow:0 8px 32px rgba(0,0,0,.7);transition:transform .4s cubic-bezier(.34,1.56,.64,1);}
+#doorBox.show{transform:translateX(-50%) translateY(0);}
+#doorBar{position:absolute;bottom:0;left:0;height:4px;background:#4CAF82;border-radius:0 0 16px 16px;width:100%;}
+#doorClose{background:#4CAF82;border:none;color:#fff;font-size:11px;font-weight:800;padding:6px 12px;border-radius:8px;cursor:pointer;flex-shrink:0;}
+
+/* ── 다중 집 ── */
+.house-card{background:var(--card);border:1.5px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;}
+.house-card:active{transform:scale(.97);}
+.house-card.active{border-color:var(--gold);background:var(--gd);}
+.house-icn{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;background:var(--card2);border:1px solid var(--bdr);}
+.house-card.active .house-icn{background:var(--gd);border-color:var(--gold);}
+.house-name{font-size:14px;font-weight:700;}
+.house-sub{font-size:11px;color:var(--tx2);margin-top:2px;}
+.house-badge{margin-left:auto;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0;}
+.house-selector{background:var(--surf);border-bottom:1px solid var(--bdr);padding:8px 16px;display:flex;align-items:center;gap:8px;flex-shrink:0;cursor:pointer;}
+.house-sel-name{font-size:12px;font-weight:700;color:var(--gold);}
+.house-sel-arrow{font-size:10px;color:var(--tx2);}
 </style>
 </head>
 <body>
@@ -415,6 +434,11 @@ button,input{font-family:inherit;}
       </div>
     </div>
     <div class="gbar"></div>
+    <div class="house-selector" onclick="showPg('pg-houses')">
+      <span style="font-size:16px;">🏠</span>
+      <span class="house-sel-name" id="houseSelectorName">우리집</span>
+      <span class="house-sel-arrow">▼ 집 변경</span>
+    </div>
     <div class="cub" id="cubBar"></div>
     <div class="connbar"><div class="cdot" id="cdot"></div><span id="ctxt" style="color:var(--tx2)">Firebase 연결 중...</span></div>
     <div class="pcon">
@@ -608,6 +632,30 @@ button,input{font-family:inherit;}
     </div>
   </div>
 
+  <!-- 다중 집 관리 -->
+  <div class="page" id="pg-houses">
+    <div class="hdr"><div class="hl"><div class="bbtn" onclick="showPg('pg-home')">←</div><div><div class="htit">집 관리</div><div class="hsub">여러 집을 하나의 앱으로</div></div></div></div>
+    <div class="gbar"></div>
+    <div class="pcon">
+      <div class="stit">등록된 집 목록</div>
+      <div id="houseList"></div>
+      <div style="border:1.5px dashed var(--bdr);border-radius:14px;padding:14px;margin-top:8px;">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;">➕ 새 집 추가</div>
+        <input class="ifield" id="houseNameInp" placeholder="집 이름 (예: 부모님집)">
+        <input class="ifield" id="houseDbInp" placeholder="Firebase DB URL">
+        <input class="ifield" id="houseEmojiInp" placeholder="이모지 (예: 🏡)">
+        <button class="btn-ok" onclick="addHouse()" style="width:100%;margin-top:4px;">추가하기</button>
+      </div>
+      <div style="background:var(--surf);border-radius:12px;padding:12px;margin-top:10px;font-size:11px;color:var(--tx2);line-height:1.8;">
+        💡 <strong style="color:var(--tx)">사용 방법</strong><br>
+        1. Firebase 콘솔에서 새 프로젝트 생성<br>
+        2. Realtime Database URL 복사<br>
+        3. 위에 집 이름 + DB URL 입력<br>
+        4. 원하는 집 카드 눌러서 전환!
+      </div>
+    </div>
+  </div>
+
   <!-- 위치 기반 제어 -->
   <div class="page" id="pg-location">
     <div class="hdr"><div class="hl"><div class="bbtn" onclick="showPg('pg-home')">←</div><div><div class="htit">위치 기반 제어</div><div class="hsub">GPS 자동 외출/귀가</div></div></div></div>
@@ -787,12 +835,24 @@ button,input{font-family:inherit;}
   <div class="ditm" onclick="showPg('pg-ai');closeDrw()"><span class="dic">🤖</span>AI 패턴 분석</div>
   <div class="ditm" onclick="showPg('pg-stat');closeDrw()"><span class="dic">📊</span>멤버별 통계</div>
   <div class="ditm" onclick="showPg('pg-guest');closeDrw()"><span class="dic">🔑</span>게스트 접근</div>
+  <div class="ditm" onclick="showPg('pg-houses');closeDrw()"><span class="dic">🏘️</span>집 관리</div>
   <div class="ditm" onclick="showPg('pg-location');closeDrw()"><span class="dic">📍</span>위치 기반 제어</div>
   <div class="ditm" onclick="showPg('pg-mode');closeDrw()"><span class="dic">🚶</span>외출/귀가 모드</div>
   <div class="ditm" onclick="showPg('pg-hist');closeDrw()"><span class="dic">📋</span>사용 기록</div>
   <div class="ditm" onclick="showPg('pg-notif');closeDrw()"><span class="dic">🔔</span>알림 설정</div>
   <div class="ditm" onclick="showPg('pg-share');closeDrw()"><span class="dic">👥</span>공유 대상</div>
   <div class="ditm" onclick="doLogout()"><span class="dic">🚪</span>로그아웃</div>
+</div>
+
+<!-- 문 열림 감지 배너 -->
+<div id="doorBox" style="display:none">
+  <div style="font-size:26px;flex-shrink:0;" id="doorIcon">🚪</div>
+  <div style="flex:1;">
+    <div style="font-size:13px;font-weight:800;color:#4CAF82;margin-bottom:3px;" id="doorTitle">현관문 열림 감지!</div>
+    <div style="font-size:11px;color:#8A9BB8;line-height:1.5;" id="doorMsg">누군가 들어왔어요</div>
+  </div>
+  <button id="doorClose" onclick="doorHide()">확인</button>
+  <div id="doorBar"></div>
 </div>
 
 <!-- 예약 알림 배너 -->
@@ -917,6 +977,7 @@ function showPg(id) {
   if (id==='pg-guest') renderGuest();
   if (id==='pg-mode') renderMode();
   if (id==='pg-location') initLocPage();
+  if (id==='pg-houses') renderHouses();
   if (id==='pg-share') renderShare();
   if (id==='pg-power') loadPower();
   if (id==='pg-timer') renderSched();
@@ -972,7 +1033,7 @@ function initFB() {
     if (b) b.textContent = Math.round(w)+' W';
     if (document.getElementById('pg-power').classList.contains('show')) updatePwHero(w);
   });
-  setTimeout(function(){ restoreTimer(); startSchedCheck(); startModeCheck(); initLocAuto(); }, 1500);
+  setTimeout(function(){ restoreTimer(); startSchedCheck(); startModeCheck(); initLocAuto(); initDoorSensor(); loadHouses(); }, 1500);
 }
 
 // ── 방 제어 ──
@@ -1375,6 +1436,166 @@ async function runAI(){
 }
 
 
+
+
+// ══════════════════════════════════════
+// 문 열림 감지
+// ══════════════════════════════════════
+var _doorAutoHide = null;
+var _lastDoorState = null;
+
+function initDoorSensor() {
+  db.ref('/door').on('value', function(s) {
+    var d = s.val();
+    if (!d) return;
+    // 문이 열렸을 때만 알림 (이전 상태와 비교)
+    if (d.open === true && _lastDoorState !== true) {
+      _lastDoorState = true;
+      doorShow(d.time || nowStr());
+      // 사용 기록에 저장
+      db.ref('/logs').push({
+        user:'도어센서', emoji:'🚪', color:'#4CAF82', bg:'rgba(76,175,130,.15)',
+        room:'현관문', act:'열림', time:d.time||nowStr(), timestamp:Date.now()
+      });
+    } else if (d.open === false) {
+      _lastDoorState = false;
+    }
+  });
+}
+
+function doorShow(time) {
+  var box = document.getElementById('doorBox');
+  var bar = document.getElementById('doorBar');
+  if (!box) return;
+  document.getElementById('doorIcon').textContent = '🚪';
+  document.getElementById('doorTitle').textContent = '현관문 열림 감지!';
+  document.getElementById('doorMsg').textContent = '🕐 ' + time + ' — 누군가 들어왔어요';
+  if (bar) {
+    bar.style.transition = 'none'; bar.style.width = '100%';
+    setTimeout(function(){ bar.style.transition='width 10s linear'; bar.style.width='0%'; }, 50);
+  }
+  box.style.display = 'flex';
+  box.classList.remove('show');
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ box.classList.add('show'); }); });
+  clearTimeout(_doorAutoHide);
+  _doorAutoHide = setTimeout(doorHide, 10000);
+  try { if(navigator.vibrate) navigator.vibrate([300,100,300,100,300]); } catch(e) {}
+}
+
+function doorHide() {
+  var box = document.getElementById('doorBox');
+  if (box) { box.classList.remove('show'); setTimeout(function(){ box.style.display='none'; }, 400); }
+  clearTimeout(_doorAutoHide);
+  try { if(navigator.vibrate) navigator.vibrate(0); } catch(e) {}
+}
+
+// ══════════════════════════════════════
+// 다중 집 관리
+// ══════════════════════════════════════
+var HOUSES = [
+  { id:'default', name:'우리집', emoji:'🏠', dbUrl:'https://smarthome-door-4279d-default-rtdb.asia-southeast1.firebasedatabase.app', isDefault:true }
+];
+var _curHouseId = 'default';
+
+function loadHouses() {
+  var saved = null;
+  try { saved = localStorage.getItem('smarthome_houses'); } catch(e) {}
+  if (saved) {
+    try {
+      var parsed = JSON.parse(saved);
+      if (parsed && parsed.length) {
+        // 기본 집은 항상 첫번째로 유지
+        var extras = parsed.filter(function(h){ return !h.isDefault; });
+        HOUSES = [HOUSES[0]].concat(extras);
+      }
+    } catch(e) {}
+  }
+  // 저장된 현재 집
+  try {
+    var cur = localStorage.getItem('smarthome_curHouse');
+    if (cur) _curHouseId = cur;
+  } catch(e) {}
+  updateHouseSelector();
+}
+
+function updateHouseSelector() {
+  var cur = HOUSES.find(function(h){ return h.id===_curHouseId; }) || HOUSES[0];
+  var el = document.getElementById('houseSelectorName');
+  if (el) el.textContent = cur.emoji + ' ' + cur.name;
+}
+
+function renderHouses() {
+  var el = document.getElementById('houseList');
+  if (!el) return;
+  el.innerHTML = HOUSES.map(function(h) {
+    var isActive = h.id === _curHouseId;
+    var hid = h.id;
+    var delBtn = h.isDefault ? '' : '<div onclick="event.stopPropagation();delHouse(this)" data-id="'+hid+'" style="width:27px;height:27px;border-radius:7px;background:var(--offd);border:1px solid var(--off);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:var(--off);flex-shrink:0;margin-left:4px;">✕</div>';
+    return '<div class="house-card'+(isActive?' active':'')+'" data-id="'+hid+'" onclick="switchHouse(this)">'+
+      '<div class="house-icn">'+h.emoji+'</div>'+
+      '<div style="flex:1">'+
+        '<div class="house-name">'+h.name+'</div>'+
+        '<div class="house-sub">'+(h.isDefault?'기본 Firebase':'외부 Firebase')+'</div>'+
+      '</div>'+
+      '<span class="house-badge" style="background:'+(isActive?'var(--gd)':'var(--card2)')+';color:'+(isActive?'var(--gold)':'var(--tx2)')+';border:1px solid '+(isActive?'var(--gold)':'var(--bdr)')+'">'+
+        (isActive?'✅ 현재':'전환')+'</span>'+
+      delBtn+
+    '</div>';
+  }).join('');
+}
+
+function switchHouse(el) {
+  var id = el.dataset ? el.dataset.id : el;
+  var house = HOUSES.find(function(h){ return h.id===id; });
+  if (!house) return;
+  _curHouseId = id;
+  try { localStorage.setItem('smarthome_curHouse', id); } catch(e) {}
+  updateHouseSelector();
+  renderHouses();
+  // DB URL 이 다르면 Firebase 재연결
+  if (!house.isDefault) {
+    toast('🏠 ' + house.name + ' 으로 전환 중...');
+    // 새 Firebase 앱으로 연결
+    try {
+      var appName = 'house_' + id;
+      var existingApp = firebase.apps.find(function(a){ return a.name===appName; });
+      var app2 = existingApp || firebase.initializeApp({
+        databaseURL: house.dbUrl
+      }, appName);
+      // 새 db 인스턴스로 교체
+      // (실제 연동은 페이지 새로고침으로 처리)
+      toast('🏠 ' + house.name + ' 전환됐어요! 새로고침하면 적용돼요');
+    } catch(e) { toast('연결 오류: ' + e.message); }
+  } else {
+    toast('🏠 ' + house.name + ' 으로 전환됐어요!');
+  }
+  showPg('pg-home');
+}
+
+function addHouse() {
+  var name  = (document.getElementById('houseNameInp').value||'').trim();
+  var dbUrl = (document.getElementById('houseDbInp').value||'').trim();
+  var emoji = (document.getElementById('houseEmojiInp').value||'').trim() || '🏡';
+  if (!name || !dbUrl) { toast('집 이름과 DB URL을 입력해주세요'); return; }
+  if (!dbUrl.includes('firebaseio.com')) { toast('올바른 Firebase DB URL을 입력해주세요'); return; }
+  var id = 'house_' + Date.now();
+  HOUSES.push({ id:id, name:name, emoji:emoji, dbUrl:dbUrl, isDefault:false });
+  try { localStorage.setItem('smarthome_houses', JSON.stringify(HOUSES)); } catch(e) {}
+  document.getElementById('houseNameInp').value = '';
+  document.getElementById('houseDbInp').value = '';
+  document.getElementById('houseEmojiInp').value = '';
+  renderHouses();
+  toast('🏡 ' + name + ' 추가됐어요!');
+}
+
+function delHouse(el) {
+  var id = el.dataset ? el.dataset.id : el;
+  HOUSES = HOUSES.filter(function(h){ return h.id!==id; });
+  try { localStorage.setItem('smarthome_houses', JSON.stringify(HOUSES)); } catch(e) {}
+  if (_curHouseId === id) { _curHouseId = 'default'; updateHouseSelector(); }
+  renderHouses();
+  toast('집이 삭제됐어요');
+}
 
 // ══════════════════════════════════════
 // 위치 기반 자동 제어
