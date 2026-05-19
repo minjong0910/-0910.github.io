@@ -344,6 +344,10 @@ button,input{font-family:inherit;}
 .mode-sch-sub{font-size:11px;color:var(--tx2);margin-top:2px;}
 .mode-sch-inp{background:var(--surf);border:1.5px solid var(--gold);border-radius:8px;color:var(--gold);font-size:15px;font-weight:700;font-family:'DM Mono',monospace;text-align:center;padding:6px 10px;letter-spacing:2px;}
 .mode-active-banner{background:rgba(78,127,212,.15);border:1.5px solid var(--bl);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+#pwInput::-webkit-outer-spin-button,
+#pwInput::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+#pwInput[type=number]{-moz-appearance:textfield;}
+#pwInput:focus{border-color:var(--gold)!important;}
 </style>
 </head>
 <body>
@@ -353,32 +357,26 @@ button,input{font-family:inherit;}
   <div class="login-logo">🏠</div>
   <div class="login-title">원 스위치 스마트홈</div>
   <div class="login-sub">스마트홈 제어 시스템<br>IT융합통신학과 졸업작품</div>
-  <div class="login-label">사용자를 선택하세요</div>
-  <div class="user-cards">
-    <div class="user-card admin-card" onclick="doLogin(0)">
-      <div class="uc-av" style="background:rgba(201,168,76,.2);border:1px solid #C9A84C">👑</div>
-      <div>
-        <div class="uc-name">김민종</div>
-        <div class="uc-id">2101042</div>
-        <span class="uc-bdg" style="background:var(--gd);color:var(--gold);border:1px solid var(--gold)">전체 관리자</span>
-      </div>
+  <div style="width:100%;max-width:320px;">
+    <div class="login-label" style="margin-bottom:12px;">비밀번호를 입력하세요</div>
+    <div style="position:relative;margin-bottom:8px;">
+      <input id="pwInput"
+        type="number"
+        placeholder="비밀번호 입력 (예: 0000000)"
+        oninput="tryPwLogin()"
+        style="width:100%;background:var(--card);border:1.5px solid var(--bdr);border-radius:14px;
+               padding:16px;font-size:18px;font-weight:700;color:var(--tx);
+               font-family:'DM Mono',monospace;text-align:center;letter-spacing:2px;
+               outline:none;-webkit-appearance:none;"
+        onkeydown="if(event.key==='Enter')tryPwLogin()"
+      >
     </div>
-    <div class="user-card" onclick="doLogin(1)">
-      <div class="uc-av" style="background:rgba(78,127,212,.2);border:1px solid #4E7FD4">😊</div>
-      <div>
-        <div class="uc-name">문성일</div>
-        <div class="uc-id">2001184</div>
-        <span class="uc-bdg" style="background:var(--bld);color:var(--bl);border:1px solid var(--bl)">멤버</span>
-      </div>
-    </div>
-    <div class="user-card" onclick="doLogin(2)">
-      <div class="uc-av" style="background:rgba(76,175,130,.2);border:1px solid #4CAF82">🙋</div>
-      <div>
-        <div class="uc-name">손의윤</div>
-        <div class="uc-id">2101056</div>
-        <span class="uc-bdg" style="background:var(--bld);color:var(--bl);border:1px solid var(--bl)">멤버</span>
-      </div>
-    </div>
+    <div id="pwError" style="color:#C9504C;font-size:12px;text-align:center;min-height:18px;margin-bottom:8px;"></div>
+    <button onclick="tryPwLogin()"
+      style="width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),#E8C87A);
+             border:none;border-radius:14px;color:#0A0E1A;font-size:15px;font-weight:800;cursor:pointer;">
+      입력
+    </button>
   </div>
 </div>
 
@@ -816,6 +814,24 @@ function doLogout() {
   curUser = null;
   document.getElementById('app').style.display = 'none';
   document.getElementById('loginPage').style.display = 'flex';
+}
+
+// ── 비밀번호 로그인 ──
+function tryPwLogin() {
+  var val = (document.getElementById('pwInput').value || '').trim();
+  var errEl = document.getElementById('pwError');
+  var pwMap = {'2101042':0,'2001184':1,'2101056':2};
+  if (pwMap[val] !== undefined) {
+    errEl.textContent = '';
+    document.getElementById('pwInput').value = '';
+    doLogin(pwMap[val]);
+  } else if (val.length >= 7) {
+    errEl.textContent = '❌ 비밀번호가 올바르지 않아요';
+    setTimeout(function(){
+      document.getElementById('pwInput').value = '';
+      errEl.textContent = '';
+    }, 1500);
+  }
 }
 
 // ── 페이지 전환 ──
